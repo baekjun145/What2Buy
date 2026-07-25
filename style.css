@@ -807,6 +807,305 @@ img {
 }
 
 /* =========================================================
+   recommend.html 전용 스타일
+   ========================================================= */
+.recommend-page-hero {
+  padding: 160px 0 40px;
+  text-align: center;
+  background-color: var(--bg-secondary);
+}
+
+.recommend-page-hero .section-label {
+  display: inline-block;
+}
+
+.recommend-page-hero .section-title {
+  margin-bottom: 18px;
+}
+
+.recommend-page-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.recommend-form-section {
+  padding: 56px 0 120px;
+}
+
+.recommend-form {
+  max-width: 720px;
+}
+
+.form-group {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.form-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.required-badge,
+.optional-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.required-badge {
+  color: #ffffff;
+  background-color: var(--accent-color);
+}
+
+.optional-badge {
+  color: var(--text-tertiary);
+  background-color: var(--bg-secondary);
+}
+
+.form-group-desc {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-bottom: 20px;
+}
+
+.form-subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 18px 0 10px;
+}
+
+.chip-select-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip-select {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-color);
+  background-color: var(--card-bg);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chip-select:hover {
+  border-color: rgba(var(--accent-color-rgb), 0.4);
+  color: var(--accent-color);
+}
+
+.chip-select.is-active {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(var(--accent-color-rgb), 0.28);
+}
+
+.field-error {
+  min-height: 18px;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.keyword-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: var(--bg-secondary);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.keyword-preview-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+}
+
+.keyword-preview-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+}
+
+.keyword-preview-text.has-keyword {
+  color: var(--accent-color);
+}
+
+.submit-btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 17px;
+}
+
+/* ---------------------------------------------------------
+   추천 결과 : 3장 카드 뒤집기
+   --------------------------------------------------------- */
+.result-section {
+  padding: 60px 0 120px;
+}
+
+.result-page-section {
+  padding-top: 140px;
+}
+
+.result-keyword-line {
+  color: var(--text-tertiary);
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+.result-loading,
+.result-error,
+.result-empty {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--text-secondary);
+}
+
+.result-error {
+  color: var(--accent-color);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 16px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: resultSpin 0.8s linear infinite;
+}
+
+@keyframes resultSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card-flip {
+  height: 400px;
+  perspective: 1200px;
+  cursor: pointer;
+}
+
+.card-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.card-flip.is-flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  background-color: var(--card-bg);
+  box-shadow: 0 8px 24px var(--shadow-color);
+  backface-visibility: hidden;
+}
+
+.card-back {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  transform: rotateY(180deg);
+}
+
+.card-thumb {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background-color: var(--bg-secondary);
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-flip-hint {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-secondary);
+}
+
+.card-back-price {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+}
+
+.card-buy-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.card-back-hint {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* =========================================================
    반응형 (모바일)
    ========================================================= */
 @media (max-width: 768px) {
@@ -874,5 +1173,25 @@ img {
     bottom: 68px;
     width: calc(100vw - 32px);
     height: min(70vh, 520px);
+  }
+
+  .recommend-page-hero {
+    padding: 120px 0 32px;
+  }
+
+  .result-page-section {
+    padding-top: 100px;
+  }
+
+  .form-group {
+    padding: 24px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-flip {
+    height: 360px;
   }
 }

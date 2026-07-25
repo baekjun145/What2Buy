@@ -1,0 +1,9 @@
+{
+  "name": "what2buy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "What2Buy - 맞춤 선물 추천 서비스",
+  "devDependencies": {
+    "vercel": "^57.0.0"
+  }
+}

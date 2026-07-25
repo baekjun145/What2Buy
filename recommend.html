@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>선물 추천받기 | What2Buy</title>
+  <meta name="description" content="연령·관계, 상황, 예산만 선택하면 AI가 맞춤 키워드를 조합해 네이버 쇼핑 선물 3가지를 추천해드립니다." />
+
+  <!-- Pretendard 폰트 CDN -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+
+  <!-- Font Awesome 아이콘 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- 스타일시트 연결 -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========================= 상단 고정 내비게이션 ========================= -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="container navbar-inner">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-gift"></i>
+        <span>What2Buy</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html"><i class="fa-solid fa-arrow-left"></i> 홈으로</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ========================= 추천 폼 인트로 ========================= -->
+    <section class="recommend-page-hero">
+      <div class="container">
+        <p class="section-label">GIFT FINDER</p>
+        <h1 class="section-title">몇 가지만 알려주시면<br />딱 맞는 선물을 찾아드릴게요</h1>
+        <p class="recommend-page-subtitle">연령·관계, 상황, 예산을 태그로 골라주세요. 선택이 끝나면 검색 키워드가 자동으로 완성돼요.</p>
+      </div>
+    </section>
+
+    <!-- ========================= 선택 폼 (Chip 기반) ========================= -->
+    <section class="recommend-form-section">
+      <form id="recommendForm" class="container recommend-form" novalidate>
+
+        <!-- 연령 · 관계 -->
+        <div class="form-group" data-group="relation">
+          <h2 class="form-group-title">연령 · 관계 <span class="required-badge">필수</span></h2>
+          <p class="form-group-desc">받는 분의 연령대(선택 사항)와 관계를 골라주세요.</p>
+
+          <p class="form-subtitle">연령대 <span class="optional-badge">선택</span></p>
+          <div class="chip-select-row" data-field="age">
+            <button type="button" class="chip-select" data-value="10대">10대</button>
+            <button type="button" class="chip-select" data-value="20대">20대</button>
+            <button type="button" class="chip-select" data-value="30대">30대</button>
+            <button type="button" class="chip-select" data-value="40대">40대</button>
+            <button type="button" class="chip-select" data-value="50대 이상">50대 이상</button>
+          </div>
+
+          <p class="form-subtitle">관계</p>
+          <div class="chip-select-row" data-field="relation">
+            <button type="button" class="chip-select" data-value="여자친구">여자친구</button>
+            <button type="button" class="chip-select" data-value="남자친구">남자친구</button>
+            <button type="button" class="chip-select" data-value="배우자">배우자</button>
+            <button type="button" class="chip-select" data-value="부모님">부모님</button>
+            <button type="button" class="chip-select" data-value="형제·자매">형제·자매</button>
+            <button type="button" class="chip-select" data-value="친구">친구</button>
+            <button type="button" class="chip-select" data-value="직장 동료">직장 동료</button>
+            <button type="button" class="chip-select" data-value="스승·제자">스승·제자</button>
+          </div>
+          <p class="field-error" data-error-for="relation"></p>
+        </div>
+
+        <!-- 상황 -->
+        <div class="form-group" data-group="situation">
+          <h2 class="form-group-title">상황 <span class="required-badge">필수</span></h2>
+          <p class="form-group-desc">어떤 상황에서 전하는 선물인가요?</p>
+
+          <div class="chip-select-row" data-field="situation">
+            <button type="button" class="chip-select" data-value="생일">생일</button>
+            <button type="button" class="chip-select" data-value="1주년">1주년</button>
+            <button type="button" class="chip-select" data-value="명절">명절</button>
+            <button type="button" class="chip-select" data-value="졸업·입학">졸업·입학</button>
+            <button type="button" class="chip-select" data-value="승진·이직">승진·이직</button>
+            <button type="button" class="chip-select" data-value="감사 인사">감사 인사</button>
+            <button type="button" class="chip-select" data-value="집들이">집들이</button>
+          </div>
+          <p class="field-error" data-error-for="situation"></p>
+        </div>
+
+        <!-- 예산 -->
+        <div class="form-group" data-group="budget">
+          <h2 class="form-group-title">예산 <span class="required-badge">필수</span></h2>
+          <p class="form-group-desc">희망하는 가격대를 선택해주세요.</p>
+
+          <div class="chip-select-row" data-field="budget">
+            <button type="button" class="chip-select" data-value="3만원 미만">3만원 미만</button>
+            <button type="button" class="chip-select" data-value="3~5만원대">3~5만원대</button>
+            <button type="button" class="chip-select" data-value="5~10만원대">5~10만원대</button>
+            <button type="button" class="chip-select" data-value="10만원 이상">10만원 이상</button>
+          </div>
+          <p class="field-error" data-error-for="budget"></p>
+        </div>
+
+        <!-- 조합된 키워드 미리보기 -->
+        <div class="keyword-preview">
+          <span class="keyword-preview-label">검색 키워드</span>
+          <span id="keywordPreview" class="keyword-preview-text">선택을 완료하면 여기에 표시돼요</span>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary submit-btn">결과 보기</button>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- ========================= 푸터 ========================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 What2Buy. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- 스크립트 연결 -->
+  <script src="recommend.js"></script>
+</body>
+</html>

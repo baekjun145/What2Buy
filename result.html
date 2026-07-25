@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>추천 결과 | What2Buy</title>
+  <meta name="description" content="선택하신 조건에 맞춰 네이버 쇼핑에서 찾은 선물 3가지를 확인해보세요." />
+
+  <!-- Pretendard 폰트 CDN -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+
+  <!-- Font Awesome 아이콘 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- 스타일시트 연결 -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========================= 상단 고정 내비게이션 ========================= -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="container navbar-inner">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-gift"></i>
+        <span>What2Buy</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="recommend.html"><i class="fa-solid fa-arrow-left"></i> 다시 선택하기</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ========================= 추천 결과 (3장 카드 뒤집기) ========================= -->
+    <section id="resultSection" class="result-section result-page-section">
+      <div class="container">
+        <p class="section-label">RESULT</p>
+        <h1 class="section-title">추천 선물 3가지</h1>
+        <p id="resultKeywordLine" class="result-keyword-line"></p>
+
+        <div id="resultLoading" class="result-loading" hidden>
+          <div class="spinner"></div>
+          <p>네이버 쇼핑에서 딱 맞는 선물을 찾고 있어요…</p>
+        </div>
+
+        <div id="resultError" class="result-error" hidden>
+          <p></p>
+        </div>
+
+        <div id="cardGrid" class="card-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================= 푸터 ========================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 What2Buy. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- 스크립트 연결 -->
+  <script src="result.js"></script>
+</body>
+</html>

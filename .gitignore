@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# vercel
+.vercel
+
+# environment variables (실제 키가 담기는 파일은 절대 커밋하지 않는다)
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+.vercel
+.env*
