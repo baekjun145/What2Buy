@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What2Buy | 선물 고민 끝, 맞춤 선물 추천</title>
+  <meta name="description" content="What2Buy는 받는 사람과 상황, 예산만 알려주시면 맞춤 키워드로 네이버 쇼핑 선물을 3초 만에 추천해드립니다." />
+
+  <!-- Pretendard 폰트 CDN -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+
+  <!-- Font Awesome 아이콘 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- 스타일시트 연결 -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========================= 상단 고정 내비게이션 ========================= -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar-inner">
+      <a href="#hero" class="brand">
+        <i class="fa-solid fa-gift"></i>
+        <span>What2Buy</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#service">서비스 소개</a>
+        <a href="#process">프로세스</a>
+        <a href="#features">핵심 기능</a>
+        <a href="#categories">카테고리</a>
+        <a href="#contact">문의</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ========================= 히어로 섹션 ========================= -->
+    <section id="hero" class="hero">
+      <p class="hero-bg-text" aria-hidden="true">GIFT, SIMPLE</p>
+
+      <div class="hero-content container">
+        <p class="hero-logo">What<span class="hero-logo-highlight">2Buy</span></p>
+        <h1 class="hero-headline">선물, 가장 좋은 방법을 찾다.</h1>
+        <p class="hero-subtitle">실패 없는 선물, 고민 시간 단축까지 한 번에.</p>
+        <a href="#process" class="btn hero-cta">선물 추천받기 →</a>
+      </div>
+    </section>
+
+    <!-- ========================= Service Intro : 서비스 소개 ========================= -->
+    <section id="service" class="section fade-in-section">
+      <div class="container">
+        <p class="section-label">SERVICE INTRO</p>
+        <h2 class="section-title">이런 고민, What2Buy가 해결해요</h2>
+
+        <div class="intro-card">
+          <p>
+            선물을 고를 때마다 <strong>“이 사람에게 뭘 줘야 할까?”</strong>라는 고민에 사로잡히곤 하죠.
+            어디서부터 시작해야 할지 막막하고, 검색어를 일일이 조합해도 만족스러운 결과가 나오지 않을 때가 많아요.
+          </p>
+          <p>
+            What2Buy는 당신만의 맞춤 키워드를 자동으로 만들고, 검증된 네이버 쇼핑 결과를 바로 보여드립니다.
+            이제는 ‘선물 선택’이라는 스트레스를 한 번에 날려버릴 수 있어요.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= Process : 4단계 추천 프로세스 (세로 타임라인) ========================= -->
+    <section id="process" class="section fade-in-section">
+      <div class="container">
+        <p class="section-label">PROCESS</p>
+        <h2 class="section-title">맞춤 추천, 4단계면 충분해요</h2>
+
+        <ol class="timeline">
+          <li class="timeline-item">
+            <span class="step-badge">STEP 01</span>
+            <h3 class="timeline-title">받는 사람과 상황을 알려주세요</h3>
+            <ul class="timeline-desc">
+              <li>관계와 연령을 선택하면 맞춤 키워드가 자동으로 만들어져요</li>
+              <li>생일, 기념일, 명절 등 상황에 맞는 감성 필터가 적용돼요</li>
+            </ul>
+          </li>
+
+          <li class="timeline-item">
+            <span class="step-badge">STEP 02</span>
+            <h3 class="timeline-title">예산을 정해주세요</h3>
+            <ul class="timeline-desc">
+              <li>최소·최대 금액을 슬라이더로 간단하게 설정해요</li>
+              <li>예산을 벗어나는 상품은 결과에서 자동으로 제외돼요</li>
+            </ul>
+          </li>
+
+          <li class="timeline-item">
+            <span class="step-badge">STEP 03</span>
+            <h3 class="timeline-title">AI가 맞춤 키워드를 조합해요</h3>
+            <ul class="timeline-desc">
+              <li>입력한 정보를 해석해 최적의 검색 키워드를 생성해요</li>
+              <li>네이버 쇼핑 데이터를 실시간으로 조회해요</li>
+            </ul>
+          </li>
+
+          <li class="timeline-item">
+            <span class="step-badge">STEP 04</span>
+            <h3 class="timeline-title">3장의 카드로 확인해요</h3>
+            <ul class="timeline-desc">
+              <li>대표 이미지, 핵심 키워드, 가격을 카드 한 장에 요약해요</li>
+              <li>카드를 눌러 바로 구매 페이지로 이동할 수 있어요</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========================= Features : 핵심 기능 카드 그리드 ========================= -->
+    <section id="features" class="section fade-in-section">
+      <div class="container">
+        <p class="section-label">FEATURES</p>
+        <h2 class="section-title">What2Buy의 핵심 기능</h2>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3 class="feature-name">맞춤 키워드 자동 조합</h3>
+            <p class="feature-subtitle">입력한 정보만으로 검색어를 만들어요</p>
+            <ul class="feature-desc">
+              <li>AI가 상황을 해석해 최적의 키워드를 생성해요</li>
+              <li>검색 결과 정확도 95% 이상, 클릭 한 번이면 완료돼요</li>
+            </ul>
+            <div class="chip-row">
+              <span class="chip">#AI추천</span>
+              <span class="chip">#키워드조합</span>
+              <span class="chip">#빠른검색</span>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <h3 class="feature-name">네이버 쇼핑 실시간 연동</h3>
+            <p class="feature-subtitle">베스트 셀러를 바로 보여드려요</p>
+            <ul class="feature-desc">
+              <li>실시간 인기 상품과 최신 리뷰까지 한눈에 확인해요</li>
+              <li>가격대 맞춤 필터링으로 예산 초과를 막아드려요</li>
+            </ul>
+            <div class="chip-row">
+              <span class="chip">#네이버쇼핑</span>
+              <span class="chip">#실시간연동</span>
+              <span class="chip">#가격맞춤</span>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <h3 class="feature-name">3장 카드 뒤집기 추천</h3>
+            <p class="feature-subtitle">다양한 옵션을 직관적으로 비교해요</p>
+            <ul class="feature-desc">
+              <li>한 화면에서 3가지 선물 후보를 확인해 고민을 줄여요</li>
+              <li>카드를 뒤집는 재미로 선택 과정이 즐거워져요</li>
+            </ul>
+            <div class="chip-row">
+              <span class="chip">#카드추천</span>
+              <span class="chip">#뒤집기</span>
+              <span class="chip">#직관적</span>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <h3 class="feature-name">즉시 구매 링크</h3>
+            <p class="feature-subtitle">추천 받은 선물, 바로 구매까지 이어져요</p>
+            <ul class="feature-desc">
+              <li>추천 페이지에서 네이버 쇼핑 구매 페이지로 바로 이동해요</li>
+              <li>적용 가능한 할인 쿠폰도 자동으로 안내해드려요</li>
+            </ul>
+            <div class="chip-row">
+              <span class="chip">#원클릭구매</span>
+              <span class="chip">#자동쿠폰</span>
+              <span class="chip">#편리함</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= Categories : 추천 카테고리 태그 ========================= -->
+    <section id="categories" class="section fade-in-section">
+      <div class="container">
+        <p class="section-label">CATEGORIES</p>
+        <h2 class="section-title">이런 기준으로 추천해요</h2>
+
+        <div class="category-group">
+          <h3 class="category-title">연령·관계</h3>
+          <div class="chip-row">
+            <span class="chip chip-lg">친구</span>
+            <span class="chip chip-lg">연인</span>
+            <span class="chip chip-lg">부모님</span>
+            <span class="chip chip-lg">형제·자매</span>
+            <span class="chip chip-lg">직장 동료</span>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <h3 class="category-title">상황</h3>
+          <div class="chip-row">
+            <span class="chip chip-lg">생일</span>
+            <span class="chip chip-lg">기념일</span>
+            <span class="chip chip-lg">명절</span>
+            <span class="chip chip-lg">졸업·입학</span>
+            <span class="chip chip-lg">승진·퇴사</span>
+            <span class="chip chip-lg">감사·위로</span>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <h3 class="category-title">예산</h3>
+          <div class="chip-row">
+            <span class="chip chip-lg">3만원 이하</span>
+            <span class="chip chip-lg">5만원 이하</span>
+            <span class="chip chip-lg">10만원 이하</span>
+            <span class="chip chip-lg">20만원 이상</span>
+            <span class="chip chip-lg">무제한</span>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <h3 class="category-title">자동 조합 키워드 예시</h3>
+          <div class="chip-row">
+            <span class="chip chip-lg">남자친구 생일 선물</span>
+            <span class="chip chip-lg">시어머니 결혼기념일 선물</span>
+            <span class="chip chip-lg">직장 동료 승진 축하 선물</span>
+            <span class="chip chip-lg">부모님 명절 선물</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= Contact : 마무리 CTA ========================= -->
+    <section id="contact" class="section contact-section fade-in-section">
+      <div class="container contact-inner">
+        <p class="contact-line">당신의 선택에 딱 맞는 선물이 바로 나타납니다. 클릭만 하면 끝!</p>
+        <a href="#hero" class="btn btn-primary">선물 퀴즈 시작하기</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================= 푸터 ========================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 What2Buy. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ========================= AI 선물 큐레이터 챗봇 ========================= -->
+  <div id="chatWidget" class="chat-widget">
+    <!-- 챗봇 열기/닫기 버튼 (플로팅 액션 버튼) -->
+    <button id="chatToggle" class="chat-toggle" type="button" aria-label="AI 선물 큐레이터 열기">
+      <i class="fa-solid fa-comment-dots chat-toggle-icon icon-open"></i>
+      <i class="fa-solid fa-xmark chat-toggle-icon icon-close"></i>
+    </button>
+
+    <!-- 챗봇 패널 -->
+    <div id="chatPanel" class="chat-panel" role="dialog" aria-label="What2Buy AI 선물 큐레이터">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <span class="chat-header-title">AI 선물 큐레이터</span>
+          <span class="chat-header-subtitle">무엇을 찾고 있는지 알려주세요</span>
+        </div>
+        <button id="chatClose" class="chat-close" type="button" aria-label="챗봇 닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="chatMessages" class="chat-messages">
+        <div class="chat-message chat-message-bot">
+          안녕하세요! What2Buy의 AI 선물 큐레이터예요. 누구에게, 어떤 상황에서 선물할 예정인지 알려주시면 딱 맞는 선물을 함께 찾아볼게요.
+        </div>
+      </div>
+
+      <form id="chatForm" class="chat-form">
+        <input
+          type="text"
+          id="chatInput"
+          class="chat-input"
+          placeholder="예: 여자친구 생일 선물 추천해줘"
+          autocomplete="off"
+        />
+        <button type="submit" id="chatSend" class="chat-send" aria-label="전송">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 스크립트 연결 -->
+  <script src="script.js"></script>
+</body>
+</html>
