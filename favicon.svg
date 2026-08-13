@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="What2Buy">
+  <!-- 브랜드 마크 : 겹친 두 개의 원 (채움 + 외곽선).
+       그라데이션은 로고 자산 안에서만 쓰인다 — 페이지 배경 장식으로는 쓰지 않는다. -->
+  <defs>
+    <linearGradient id="w2b-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff7a33" />
+      <stop offset="1" stop-color="#f9420d" />
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="14" fill="url(#w2b-bg)" />
+
+  <!-- 외곽선 원이 뒤, 채운 원이 앞 : 앞 원이 뒷 원의 호를 가린다 -->
+  <!-- 작은 크기에서도 외곽선이 사라지지 않도록 원본보다 선을 두껍게 잡았다 -->
+  <circle cx="40" cy="40.5" r="13.5" fill="none" stroke="#ffffff" stroke-width="3" />
+  <circle cx="25" cy="25.5" r="13.5" fill="#ffffff" />
+</svg>

@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // 사용자가 고른 세 가지 기준 (연령은 관계에 포함되는 선택 사항)
 const selection = {
   age: null,
+  gender: null,
   relation: null,
   situation: null,
   budget: null,
@@ -49,6 +50,7 @@ function initChipSelectors() {
         selection[field] = chip.dataset.value;
       }
 
+      // 연령대는 선택 항목이라 자기 오류가 없다. 같은 그룹의 관계 오류를 지운다.
       clearFieldError(field === "age" ? "relation" : field);
       updateKeywordPreview();
     });
@@ -60,11 +62,13 @@ function initChipSelectors() {
    --------------------------------------------------------- */
 function updateKeywordPreview() {
   const previewEl = document.getElementById("keywordPreview");
-  const relationPart = [selection.age, selection.relation].filter(Boolean).join(" ");
-  const parts = [relationPart, selection.situation, selection.budget].filter(Boolean);
+  // 상품 검색어가 아니라 "선택한 조건" 요약이다.
+  // 실제 추천은 이 문자열이 아니라 아래 구조화된 값으로 이뤄진다.
+  const person = [selection.age, selection.gender].filter(Boolean).join(" ");
+  const parts = [person, selection.relation, selection.situation, selection.budget].filter(Boolean);
 
   if (parts.length > 0) {
-    previewEl.textContent = `${parts.join(" ")} 선물`;
+    previewEl.textContent = parts.join(" · ");
     previewEl.classList.add("has-keyword");
   } else {
     previewEl.textContent = "선택을 완료하면 여기에 표시돼요";
@@ -75,6 +79,7 @@ function updateKeywordPreview() {
 // 필수 항목(관계·상황·예산) 중 선택하지 않은 값이 있는지 검사
 function getMissingFields() {
   const missing = [];
+  if (!selection.gender) missing.push({ field: "gender", label: "성별" });
   if (!selection.relation) missing.push({ field: "relation", label: "관계" });
   if (!selection.situation) missing.push({ field: "situation", label: "상황" });
   if (!selection.budget) missing.push({ field: "budget", label: "예산" });
@@ -111,7 +116,10 @@ function handleSubmit(event) {
   if (missing.length > 0) {
     missing.forEach(({ field, label }) => showFieldError(field, `${label} 항목을 선택해주세요.`));
 
-    const firstGroup = document.querySelector(`[data-group="${missing[0].field}"]`);
+    // 자기 이름의 그룹이 없는 항목(성별 등)은 자기 칩 행이 속한 그룹으로 이동한다.
+    const firstGroup =
+      document.querySelector(`[data-group="${missing[0].field}"]`) ||
+      document.querySelector(`[data-field="${missing[0].field}"]`)?.closest(".form-group");
     if (firstGroup) firstGroup.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
@@ -119,6 +127,7 @@ function handleSubmit(event) {
   // 화면에서 선택한 세 가지 기준을 하나의 객체로 수집
   const preferences = {
     age: selection.age,
+    gender: selection.gender,
     relation: selection.relation,
     situation: selection.situation,
     budget: selection.budget,
