@@ -18,7 +18,7 @@
 //
 // 두 호출 모두 ages/gender 필터를 받으므로 개인화는 API가 직접 해준다.
 
-const { CATEGORY_NAMES, BUDGET_PRICE_RANGE, KEYWORDS } = require("../lib/gift-keywords");
+const { CATEGORY_NAMES, KEYWORDS } = require("../lib/gift-keywords");
 const supabase = require("../lib/supabase");
 
 // 키워드 사전은 DB(gift_keywords)를 우선 쓰고, 못 읽으면 코드에 있는 사전으로 돌아간다.
@@ -279,19 +279,13 @@ async function fetchCategoryWeights(categoryIds, period, segment) {
 // 숨겨도 결과는 같았다(실제 클릭으로 확인). 반면 통합검색의 쇼핑 탭(where=shop)은
 // 외부 유입으로도 정상적으로 열린다.
 //
-// [왜 가격어를 검색어에 안 넣는가]
-// "3~5만원대"를 검색어에 붙이면 네이버는 그걸 가격 조건이 아니라 상품명에 들어갈
-// 낱말로 취급한다. 그래서 제목에 "3만원대"라고 적힌, 실제 가격은 제각각인 상품이 올라온다.
-// 검색어에는 물건 이름만 남기고 가격은 파라미터로 따로 넘긴다.
-function buildShoppingUrl(keyword, budget) {
+// [가격 필터는 링크로 걸 수 없다]
+// 통합검색은 minPrice/maxPrice 파라미터를 무시한다(실제 클릭으로 확인).
+// 그렇다고 "3~5만원대"를 검색어에 붙이면 네이버가 그걸 가격 조건이 아니라 상품명에
+// 들어갈 낱말로 취급해서, 제목에 "3만원대"라고 적힌 엉뚱한 가격의 상품이 올라온다.
+// 두 방법 다 안 되므로 링크에는 물건 이름만 넣고, 예산은 카드 화면에서 안내한다.
+function buildShoppingUrl(keyword) {
   const params = new URLSearchParams({ where: "shop", query: `${keyword} 선물` });
-
-  const range = BUDGET_PRICE_RANGE[budget];
-  if (range) {
-    if (range.minPrice !== null) params.set("minPrice", String(range.minPrice));
-    if (range.maxPrice !== null) params.set("maxPrice", String(range.maxPrice));
-  }
-
   return `https://search.naver.com/search.naver?${params.toString()}`;
 }
 
@@ -426,7 +420,7 @@ module.exports = async function handler(req, res) {
     );
     top.forEach((item, i) => {
       Object.assign(item, images[i] || {});
-      item.searchUrl = buildShoppingUrl(item.keyword, budget);
+      item.searchUrl = buildShoppingUrl(item.keyword);
     });
 
     // 조회 이력을 남기고 그 id를 함께 내려보낸다. 브라우저는 이후 클릭 이벤트에

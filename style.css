@@ -1171,7 +1171,25 @@ img {
   font-size: 13px;
   line-height: 1.6;
   color: var(--text-secondary);
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+}
+
+/* 가격 안내 : 네이버 링크로 가격 필터를 걸 수 없어 카드에서 대신 알려준다 */
+.card-back-budget {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background-color: rgba(var(--accent-color-rgb), 0.1);
+  color: var(--accent-color);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.card-back-budget strong {
+  font-weight: 800;
 }
 
 .card-body {
