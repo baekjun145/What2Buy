@@ -18,7 +18,8 @@
       "Bash(node chat-widget.js \"https://whatbuy.vercel.app\")",
       "Bash(node verify-new-keywords.js)",
       "Bash(rm -rf rel-profile)",
-      "Bash(node relcheck.js)"
+      "Bash(node relcheck.js)",
+      "PowerShell(Start-Process \"chrome.exe\" -ArgumentList \"--new-window\", $p)"
     ]
   }
 }

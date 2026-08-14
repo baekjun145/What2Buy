@@ -102,10 +102,12 @@ function buildSummary(preferences) {
 }
 
 // 쇼핑 링크는 서버(api/gift-ranking)가 가격 필터까지 붙여 내려준다.
-// 혹시 없으면 키워드만으로 된 검색 링크로 대신한다.
+// 혹시 없으면 통합검색 쇼핑 탭으로 대신 보낸다.
+// (쇼핑 전용 검색은 외부 유입을 차단하므로 폴백도 통합검색이어야 한다)
 function shoppingUrlFor(item) {
   if (item.searchUrl) return item.searchUrl;
-  return `https://search.shopping.naver.com/search/all?query=${encodeURIComponent(item.keyword + " 선물")}`;
+  const query = encodeURIComponent(`${item.keyword} 선물`);
+  return `https://search.naver.com/search.naver?where=shop&query=${query}`;
 }
 
 async function fetchRanking(preferences) {

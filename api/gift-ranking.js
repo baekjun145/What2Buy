@@ -273,21 +273,26 @@ async function fetchCategoryWeights(categoryIds, period, segment) {
 
 // 추천 키워드를 네이버 쇼핑에서 여는 링크.
 //
-// 가격어("3~5만원대")를 검색어에 넣으면 안 된다. 네이버는 그걸 가격 조건이 아니라
-// 상품명에 들어갈 낱말로 취급해서, 실제 가격은 제각각인 결과가 나온다.
-// 검색어에는 물건 이름만 남기고 가격은 필터 파라미터로 따로 넘긴다.
+// [왜 통합검색(search.naver.com)으로 보내는가]
+// 쇼핑 전용 검색(search.shopping.naver.com)은 외부 사이트에서 들어오는 링크를 막는다.
+// "쇼핑 서비스 접속이 일시적으로 제한되었습니다" 화면이 뜨며, rel=noreferrer로 출처를
+// 숨겨도 결과는 같았다(실제 클릭으로 확인). 반면 통합검색의 쇼핑 탭(where=shop)은
+// 외부 유입으로도 정상적으로 열린다.
+//
+// [왜 가격어를 검색어에 안 넣는가]
+// "3~5만원대"를 검색어에 붙이면 네이버는 그걸 가격 조건이 아니라 상품명에 들어갈
+// 낱말로 취급한다. 그래서 제목에 "3만원대"라고 적힌, 실제 가격은 제각각인 상품이 올라온다.
+// 검색어에는 물건 이름만 남기고 가격은 파라미터로 따로 넘긴다.
 function buildShoppingUrl(keyword, budget) {
-  const params = new URLSearchParams({ query: `${keyword} 선물` });
+  const params = new URLSearchParams({ where: "shop", query: `${keyword} 선물` });
 
   const range = BUDGET_PRICE_RANGE[budget];
   if (range) {
     if (range.minPrice !== null) params.set("minPrice", String(range.minPrice));
     if (range.maxPrice !== null) params.set("maxPrice", String(range.maxPrice));
-    // 가격 필터를 걸면 가격순 정렬이 함께 걸려 있어야 구간 안에서 훑어보기 좋다.
-    params.set("sort", "price_asc");
   }
 
-  return `https://search.shopping.naver.com/search/all?${params.toString()}`;
+  return `https://search.naver.com/search.naver?${params.toString()}`;
 }
 
 // 상황·예산으로 후보를 좁힌다. 후보가 너무 적으면 예산 → 상황 순으로 조건을 푼다.
