@@ -18,7 +18,7 @@
 //
 // 두 호출 모두 ages/gender 필터를 받으므로 개인화는 API가 직접 해준다.
 
-const { CATEGORY_NAMES, KEYWORDS } = require("../lib/gift-keywords");
+const { CATEGORY_NAMES, BUDGET_PRICE_RANGE, KEYWORDS } = require("../lib/gift-keywords");
 
 const API_BASE = "https://naverapihub.apigw.ntruss.com";
 const MAX_KEYWORDS_PER_CALL = 5; // API 제한 (6개 이상은 400)
@@ -220,6 +220,25 @@ async function fetchCategoryWeights(categoryIds, period, segment) {
   return weights;
 }
 
+// 추천 키워드를 네이버 쇼핑에서 여는 링크.
+//
+// 가격어("3~5만원대")를 검색어에 넣으면 안 된다. 네이버는 그걸 가격 조건이 아니라
+// 상품명에 들어갈 낱말로 취급해서, 실제 가격은 제각각인 결과가 나온다.
+// 검색어에는 물건 이름만 남기고 가격은 필터 파라미터로 따로 넘긴다.
+function buildShoppingUrl(keyword, budget) {
+  const params = new URLSearchParams({ query: `${keyword} 선물` });
+
+  const range = BUDGET_PRICE_RANGE[budget];
+  if (range) {
+    if (range.minPrice !== null) params.set("minPrice", String(range.minPrice));
+    if (range.maxPrice !== null) params.set("maxPrice", String(range.maxPrice));
+    // 가격 필터를 걸면 가격순 정렬이 함께 걸려 있어야 구간 안에서 훑어보기 좋다.
+    params.set("sort", "price_asc");
+  }
+
+  return `https://search.shopping.naver.com/search/all?${params.toString()}`;
+}
+
 // 상황·예산으로 후보를 좁힌다. 후보가 너무 적으면 예산 → 상황 순으로 조건을 푼다.
 function selectCandidates(situation, budget) {
   const bySituationAndBudget = KEYWORDS.filter(
@@ -328,7 +347,10 @@ module.exports = async function handler(req, res) {
     const images = await Promise.all(
       top.map((item) => fetchKeywordImage(item.keyword, { age, gender }))
     );
-    top.forEach((item, i) => Object.assign(item, images[i] || {}));
+    top.forEach((item, i) => {
+      Object.assign(item, images[i] || {});
+      item.searchUrl = buildShoppingUrl(item.keyword, budget);
+    });
 
     res.status(200).json({
       items: top,

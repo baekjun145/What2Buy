@@ -43,8 +43,8 @@ function readPreferences() {
   }
 }
 
-// 예: { age:"30대", gender:"여성", relation:"여자친구", situation:"생일", budget:"3~5만원대" }
-// → "30대 여성 · 여자친구 · 생일 · 3~5만원대"
+// 예: { age:"30대", gender:"여성", relation:"연인", situation:"생일", budget:"3~5만원대" }
+// → "30대 여성 · 연인 · 생일 · 3~5만원대"
 function buildSummary(preferences) {
   const person = [preferences.age, preferences.gender].filter(Boolean).join(" ");
   return [person, preferences.relation, preferences.situation, preferences.budget]
@@ -52,11 +52,11 @@ function buildSummary(preferences) {
     .join(" · ");
 }
 
-// 키워드를 네이버 쇼핑에서 바로 찾아볼 수 있는 실제 검색 URL.
-// 예산 라벨을 함께 넣어 가격대가 얼추 맞는 결과가 위로 오게 한다.
-function naverShoppingSearchUrl(keyword, budget) {
-  const query = [keyword, budget, "선물"].filter(Boolean).join(" ");
-  return `https://search.shopping.naver.com/search/all?query=${encodeURIComponent(query)}`;
+// 쇼핑 링크는 서버(api/gift-ranking)가 가격 필터까지 붙여 내려준다.
+// 혹시 없으면 키워드만으로 된 검색 링크로 대신한다.
+function shoppingUrlFor(item) {
+  if (item.searchUrl) return item.searchUrl;
+  return `https://search.shopping.naver.com/search/all?query=${encodeURIComponent(item.keyword + " 선물")}`;
 }
 
 async function fetchRanking(preferences) {
@@ -134,7 +134,7 @@ function renderCards(items, preferences, meta) {
     const card = document.createElement("div");
     card.className = "card-flip";
 
-    const link = naverShoppingSearchUrl(item.keyword, preferences.budget);
+    const link = shoppingUrlFor(item);
 
     // 이미지 조회에 실패한 항목은 사진 영역 없이 렌더링한다.
     const photo = item.image
