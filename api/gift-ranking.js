@@ -19,6 +19,48 @@
 // 두 호출 모두 ages/gender 필터를 받으므로 개인화는 API가 직접 해준다.
 
 const { CATEGORY_NAMES, BUDGET_PRICE_RANGE, KEYWORDS } = require("../lib/gift-keywords");
+const supabase = require("../lib/supabase");
+
+// 키워드 사전은 DB(gift_keywords)를 우선 쓰고, 못 읽으면 코드에 있는 사전으로 돌아간다.
+// DB가 비었거나 장애여도 추천은 계속 동작해야 한다.
+// 워밍된 인스턴스 안에서는 잠깐 캐시해 요청마다 DB를 때리지 않는다.
+const DICTIONARY_TTL_MS = 5 * 60 * 1000;
+let dictionaryCache = { keywords: null, loadedAt: 0, source: "code" };
+
+async function loadKeywords() {
+  const now = Date.now();
+  if (dictionaryCache.keywords && now - dictionaryCache.loadedAt < DICTIONARY_TTL_MS) {
+    return dictionaryCache;
+  }
+
+  if (supabase.isConfigured()) {
+    try {
+      const rows = await supabase.select(
+        "gift_keywords",
+        "select=keyword,category_id,category_name,budgets,situations&is_active=eq.true"
+      );
+      if (Array.isArray(rows) && rows.length > 0) {
+        dictionaryCache = {
+          keywords: rows.map((row) => ({
+            keyword: row.keyword,
+            category: row.category_id,
+            categoryName: row.category_name,
+            budgets: row.budgets || [],
+            situations: row.situations || [],
+          })),
+          loadedAt: now,
+          source: "db",
+        };
+        return dictionaryCache;
+      }
+    } catch (error) {
+      // DB를 못 읽으면 코드 사전으로 내려간다.
+    }
+  }
+
+  dictionaryCache = { keywords: KEYWORDS, loadedAt: now, source: "code" };
+  return dictionaryCache;
+}
 
 const API_BASE = "https://naverapihub.apigw.ntruss.com";
 const MAX_KEYWORDS_PER_CALL = 5; // API 제한 (6개 이상은 400)
@@ -34,6 +76,9 @@ const AGE_PARAM = {
 };
 
 const GENDER_PARAM = { 여성: "f", 남성: "m" };
+
+// session_id는 uuid 컬럼이라 형식이 맞지 않으면 insert가 통째로 실패한다.
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // 조회 기간 : 최근 3개월. 월 단위로 끊어 계절성은 살리되 표본은 확보한다.
 function buildPeriod() {
@@ -240,8 +285,8 @@ function buildShoppingUrl(keyword, budget) {
 }
 
 // 상황·예산으로 후보를 좁힌다. 후보가 너무 적으면 예산 → 상황 순으로 조건을 푼다.
-function selectCandidates(situation, budget) {
-  const bySituationAndBudget = KEYWORDS.filter(
+function selectCandidates(keywords, situation, budget) {
+  const bySituationAndBudget = keywords.filter(
     (k) =>
       (!situation || k.situations.includes(situation)) &&
       (!budget || k.budgets.includes(budget))
@@ -250,12 +295,25 @@ function selectCandidates(situation, budget) {
     return { candidates: bySituationAndBudget, relaxed: null };
   }
 
-  const bySituation = KEYWORDS.filter((k) => !situation || k.situations.includes(situation));
+  const bySituation = keywords.filter((k) => !situation || k.situations.includes(situation));
   if (bySituation.length >= 6) {
     return { candidates: bySituation, relaxed: "budget" };
   }
 
-  return { candidates: KEYWORDS, relaxed: "all" };
+  return { candidates: keywords, relaxed: "all" };
+}
+
+// 추천 조회를 기록하고 방금 만든 행의 id를 돌려준다.
+// 이 id를 클릭 이벤트에 붙여야 "추천 → 클릭" 전환을 이어볼 수 있다.
+// 기록에 실패해도 추천 자체는 그대로 내보낸다.
+async function logRecommendation(payload) {
+  if (!supabase.isConfigured()) return null;
+  try {
+    const rows = await supabase.insert("recommendation_events", payload, { returning: true });
+    return rows?.[0]?.id ?? null;
+  } catch (error) {
+    return null;
+  }
 }
 
 module.exports = async function handler(req, res) {
@@ -272,7 +330,8 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const { age, gender, situation, budget } = req.body || {};
+  const { age, gender, relation, situation, budget, sessionId } = req.body || {};
+  const startedAt = Date.now();
 
   const period = buildPeriod();
   const ages = AGE_PARAM[age] || [];
@@ -282,7 +341,8 @@ module.exports = async function handler(req, res) {
   if (ages.length) segment.ages = ages;
   if (genderParam) segment.gender = genderParam;
 
-  const { candidates, relaxed } = selectCandidates(situation, budget);
+  const dictionary = await loadKeywords();
+  const { candidates, relaxed } = selectCandidates(dictionary.keywords, situation, budget);
 
   // 후보를 카테고리별로 묶는다 (category 파라미터가 호출당 하나이므로)
   const byCategory = new Map();
@@ -352,13 +412,30 @@ module.exports = async function handler(req, res) {
       item.searchUrl = buildShoppingUrl(item.keyword, budget);
     });
 
+    // 조회 이력을 남기고 그 id를 함께 내려보낸다. 브라우저는 이후 클릭 이벤트에
+    // 이 id를 붙여 보내고, 그걸로 "추천 → 클릭" 전환을 이어볼 수 있다.
+    const recommendationId = await logRecommendation({
+      session_id: UUID_PATTERN.test(String(sessionId || "")) ? sessionId : null,
+      age: age || null,
+      gender: gender || null,
+      relation: relation || null,
+      situation: situation || null,
+      budget: budget || null,
+      relaxed,
+      result_keywords: top.map((item) => item.keyword),
+      candidate_count: candidates.length,
+      duration_ms: Date.now() - startedAt,
+    });
+
     res.status(200).json({
       items: top,
+      recommendationId,
       meta: {
         candidateCount: candidates.length,
         scoredCount: scored.length,
         relaxed, // 조건을 완화했다면 어떤 축을 풀었는지
         segment: { age: age || null, gender: gender || null },
+        dictionarySource: dictionary.source, // 'db' | 'code'
         period,
       },
     });

@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(timeout 60 vercel teams ls)"
+      "Bash(timeout 60 vercel teams ls)",
+      "Bash(node -e ' *)"
     ]
   }
 }

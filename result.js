@@ -10,9 +10,43 @@
 // =========================================================
 
 const PREFERENCES_STORAGE_KEY = "what2buy_preferences";
+const SESSION_STORAGE_KEY = "what2buy_session_id";
 
 // 조건 요약 문자열. 오류 안내와 검색 링크에서 재사용한다.
 let conditionSummary = "";
+// 이번 추천 조회의 id. 클릭 이벤트를 이 조회에 이어 붙이는 데 쓴다.
+let currentRecommendationId = null;
+
+// 익명 방문자 식별자. 로그인 기능이 없으므로 개인을 특정하지 않고,
+// "같은 브라우저의 연속된 행동"을 묶는 용도로만 쓴다.
+function getSessionId() {
+  let id = localStorage.getItem(SESSION_STORAGE_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(SESSION_STORAGE_KEY, id);
+  }
+  return id;
+}
+
+// 클릭 수집. 실패해도 사용자 흐름을 막지 않는다.
+function track(action, keyword, position) {
+  try {
+    fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: getSessionId(),
+        recommendationId: currentRecommendationId,
+        keyword,
+        action,
+        position,
+      }),
+      keepalive: true, // 링크 클릭으로 페이지를 떠나도 전송이 끊기지 않게
+    }).catch(() => {});
+  } catch (error) {
+    /* 수집 실패는 무시한다 */
+  }
+}
 
 document.addEventListener("DOMContentLoaded", initResultPage);
 
@@ -75,8 +109,10 @@ async function fetchRanking(preferences) {
       body: JSON.stringify({
         age: preferences.age,
         gender: preferences.gender,
+        relation: preferences.relation,
         situation: preferences.situation,
         budget: preferences.budget,
+        sessionId: getSessionId(),
       }),
     });
 
@@ -91,6 +127,7 @@ async function fetchRanking(preferences) {
       return;
     }
 
+    currentRecommendationId = data.recommendationId ?? null;
     renderCards(data.items || [], preferences, data.meta || {});
   } catch (error) {
     showResultError("서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.");
@@ -181,9 +218,22 @@ function renderCards(items, preferences, meta) {
       });
     }
 
+    const rank = index + 1;
+
+    // 쇼핑 링크로 나가는 클릭
+    card.querySelector(".card-buy-btn").addEventListener("click", () => {
+      track("shopping_link", item.keyword, rank);
+    });
+
+    // 카드 뒤집기. 같은 카드를 여러 번 뒤집어도 첫 번째만 센다.
+    let flipLogged = false;
     card.addEventListener("click", (event) => {
       if (event.target.closest(".card-buy-btn")) return;
       card.classList.toggle("is-flipped");
+      if (!flipLogged) {
+        flipLogged = true;
+        track("flip", item.keyword, rank);
+      }
     });
 
     cardGrid.appendChild(card);
