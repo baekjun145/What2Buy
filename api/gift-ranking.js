@@ -37,7 +37,7 @@ async function loadKeywords() {
     try {
       const rows = await supabase.select(
         "gift_keywords",
-        "select=keyword,category_id,category_name,budgets,situations&is_active=eq.true"
+        "select=keyword,category_id,category_name,audience,budgets,situations&is_active=eq.true"
       );
       if (Array.isArray(rows) && rows.length > 0) {
         dictionaryCache = {
@@ -45,6 +45,7 @@ async function loadKeywords() {
             keyword: row.keyword,
             category: row.category_id,
             categoryName: row.category_name,
+            audience: row.audience || "adult",
             budgets: row.budgets || [],
             situations: row.situations || [],
           })),
@@ -66,7 +67,9 @@ const API_BASE = "https://naverapihub.apigw.ntruss.com";
 const MAX_KEYWORDS_PER_CALL = 5; // API 제한 (6개 이상은 400)
 const MAX_CATEGORIES_PER_CALL = 3; // API 제한 (4개 이상은 400)
 
-// 폼의 연령대 라벨 → 쇼핑인사이트 ages 파라미터
+// 폼의 연령대 라벨 → 쇼핑인사이트 ages 파라미터.
+// '영유아/아동'은 목록에 없다. 쇼핑인사이트의 ages는 10대~60대뿐이라 표현할 수 없어
+// 연령 필터를 걸지 않고, 대신 사전의 audience로 후보를 가른다.
 const AGE_PARAM = {
   "10대": ["10"],
   "20대": ["20"],
@@ -75,6 +78,9 @@ const AGE_PARAM = {
   "50대 이상": ["50", "60"],
 };
 
+const KIDS_AGE = "영유아/아동";
+
+// '성별 무관'은 필터를 걸지 않는다는 뜻이므로 매핑이 없다.
 const GENDER_PARAM = { 여성: "f", 남성: "m" };
 
 // session_id는 uuid 컬럼이라 형식이 맞지 않으면 insert가 통째로 실패한다.
@@ -285,8 +291,14 @@ function buildShoppingUrl(keyword, budget) {
 }
 
 // 상황·예산으로 후보를 좁힌다. 후보가 너무 적으면 예산 → 상황 순으로 조건을 푼다.
-function selectCandidates(keywords, situation, budget) {
-  const bySituationAndBudget = keywords.filter(
+//
+// audience는 절대 완화하지 않는다. 아기 선물을 찾는 사람에게 성인용 향수를 권하거나
+// 그 반대가 되면 추천 자체가 무의미해지기 때문이다.
+function selectCandidates(keywords, { age, situation, budget }) {
+  const wantsKids = age === KIDS_AGE;
+  const pool = keywords.filter((k) => (k.audience === "kids") === wantsKids);
+
+  const bySituationAndBudget = pool.filter(
     (k) =>
       (!situation || k.situations.includes(situation)) &&
       (!budget || k.budgets.includes(budget))
@@ -295,12 +307,12 @@ function selectCandidates(keywords, situation, budget) {
     return { candidates: bySituationAndBudget, relaxed: null };
   }
 
-  const bySituation = keywords.filter((k) => !situation || k.situations.includes(situation));
+  const bySituation = pool.filter((k) => !situation || k.situations.includes(situation));
   if (bySituation.length >= 6) {
     return { candidates: bySituation, relaxed: "budget" };
   }
 
-  return { candidates: keywords, relaxed: "all" };
+  return { candidates: pool, relaxed: "all" };
 }
 
 // 추천 조회를 기록하고 방금 만든 행의 id를 돌려준다.
@@ -342,7 +354,7 @@ module.exports = async function handler(req, res) {
   if (genderParam) segment.gender = genderParam;
 
   const dictionary = await loadKeywords();
-  const { candidates, relaxed } = selectCandidates(dictionary.keywords, situation, budget);
+  const { candidates, relaxed } = selectCandidates(dictionary.keywords, { age, situation, budget });
 
   // 후보를 카테고리별로 묶는다 (category 파라미터가 호출당 하나이므로)
   const byCategory = new Map();

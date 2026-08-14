@@ -32,6 +32,7 @@ const rows = KEYWORDS.map((k) => ({
   keyword: k.keyword,
   category_id: k.category,
   category_name: CATEGORY_NAMES[k.category] || k.category,
+  audience: k.audience || "adult",
   budgets: k.budgets,
   situations: k.situations,
   is_active: true,

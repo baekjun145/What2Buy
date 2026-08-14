@@ -93,7 +93,9 @@ function readPreferences() {
 // 예: { age:"30대", gender:"여성", relation:"연인", situation:"생일", budget:"3~5만원대" }
 // → "30대 여성 · 연인 · 생일 · 3~5만원대"
 function buildSummary(preferences) {
-  const person = [preferences.age, preferences.gender].filter(Boolean).join(" ");
+  // '성별 무관'은 조건이 아니라 "안 따짐"이므로 요약에 굳이 적지 않는다.
+  const genderLabel = preferences.gender === "성별 무관" ? null : preferences.gender;
+  const person = [preferences.age, genderLabel].filter(Boolean).join(" ");
   return [person, preferences.relation, preferences.situation, preferences.budget]
     .filter(Boolean)
     .join(" · ");
@@ -178,7 +180,10 @@ function renderCards(items, preferences, meta) {
     cardGrid.parentElement.insertBefore(notice, cardGrid);
   }
 
-  const segment = [preferences.age, preferences.gender].filter(Boolean).join(" ") || "전체";
+  const segment =
+    [preferences.age, preferences.gender === "성별 무관" ? null : preferences.gender]
+      .filter(Boolean)
+      .join(" ") || "전체";
 
   items.forEach((item, index) => {
     const card = document.createElement("div");

@@ -69,6 +69,7 @@
 
           <p class="form-subtitle">연령대 <span class="optional-badge">선택</span></p>
           <div class="chip-select-row" data-field="age">
+            <button type="button" class="chip-select" data-value="영유아/아동">영유아/아동</button>
             <button type="button" class="chip-select" data-value="10대">10대</button>
             <button type="button" class="chip-select" data-value="20대">20대</button>
             <button type="button" class="chip-select" data-value="30대">30대</button>
@@ -80,9 +81,13 @@
           <div class="chip-select-row" data-field="gender">
             <button type="button" class="chip-select" data-value="여성">여성</button>
             <button type="button" class="chip-select" data-value="남성">남성</button>
+            <button type="button" class="chip-select" data-value="성별 무관">성별 무관</button>
           </div>
           <p class="field-error" data-error-for="gender"></p>
 
+          <!-- 관계는 사적/공적 두 줄로 나눠 고르기 쉽게 한다.
+               두 줄 모두 data-field="relation"이라 recommend.js가 같은 필드끼리
+               서로 해제해 준다(한 번에 하나만 선택됨). -->
           <p class="form-subtitle">관계</p>
           <div class="chip-select-row" data-field="relation">
             <button type="button" class="chip-select" data-value="연인">연인</button>
@@ -90,8 +95,11 @@
             <button type="button" class="chip-select" data-value="부모님">부모님</button>
             <button type="button" class="chip-select" data-value="형제·자매">형제·자매</button>
             <button type="button" class="chip-select" data-value="친구">친구</button>
+          </div>
+          <div class="chip-select-row chip-select-row-sub" data-field="relation">
             <button type="button" class="chip-select" data-value="직장 동료">직장 동료</button>
             <button type="button" class="chip-select" data-value="스승·제자">스승·제자</button>
+            <button type="button" class="chip-select" data-value="지인">지인</button>
           </div>
           <p class="field-error" data-error-for="relation"></p>
         </div>
@@ -103,12 +111,14 @@
 
           <div class="chip-select-row" data-field="situation">
             <button type="button" class="chip-select" data-value="생일">생일</button>
-            <button type="button" class="chip-select" data-value="1주년">1주년</button>
+            <button type="button" class="chip-select" data-value="기념일">기념일</button>
             <button type="button" class="chip-select" data-value="명절">명절</button>
             <button type="button" class="chip-select" data-value="졸업·입학">졸업·입학</button>
             <button type="button" class="chip-select" data-value="승진·이직">승진·이직</button>
             <button type="button" class="chip-select" data-value="감사 인사">감사 인사</button>
             <button type="button" class="chip-select" data-value="집들이">집들이</button>
+            <button type="button" class="chip-select" data-value="임신·출산">임신·출산</button>
+            <button type="button" class="chip-select" data-value="응원·위로">응원·위로</button>
           </div>
           <p class="field-error" data-error-for="situation"></p>
         </div>

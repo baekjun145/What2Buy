@@ -897,6 +897,11 @@ img {
   gap: 10px;
 }
 
+/* 같은 필드를 두 줄로 나눌 때(관계: 사적/공적) 아래 줄을 바짝 붙여 한 묶음으로 보이게 한다 */
+.chip-select-row-sub {
+  margin-top: 8px;
+}
+
 .chip-select {
   display: inline-flex;
   align-items: center;

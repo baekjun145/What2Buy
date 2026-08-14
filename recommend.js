@@ -37,10 +37,14 @@ function initChipSelectors() {
 
       const alreadyActive = chip.classList.contains("is-active");
 
-      row.querySelectorAll(".chip-select").forEach((btn) => {
-        btn.classList.remove("is-active");
-        btn.setAttribute("aria-pressed", "false");
-      });
+      // 같은 필드가 여러 줄로 나뉘어 있을 수 있다(관계: 사적/공적).
+      // 자기 줄만 지우면 줄마다 하나씩 선택되므로, 같은 필드 전체를 해제한다.
+      document
+        .querySelectorAll(`.chip-select-row[data-field="${field}"] .chip-select`)
+        .forEach((btn) => {
+          btn.classList.remove("is-active");
+          btn.setAttribute("aria-pressed", "false");
+        });
 
       if (alreadyActive) {
         selection[field] = null;
@@ -64,7 +68,9 @@ function updateKeywordPreview() {
   const previewEl = document.getElementById("keywordPreview");
   // 상품 검색어가 아니라 "선택한 조건" 요약이다.
   // 실제 추천은 이 문자열이 아니라 아래 구조화된 값으로 이뤄진다.
-  const person = [selection.age, selection.gender].filter(Boolean).join(" ");
+  // '성별 무관'은 조건이 아니라 "안 따짐"이므로 요약에 굳이 적지 않는다.
+  const genderLabel = selection.gender === "성별 무관" ? null : selection.gender;
+  const person = [selection.age, genderLabel].filter(Boolean).join(" ");
   const parts = [person, selection.relation, selection.situation, selection.budget].filter(Boolean);
 
   if (parts.length > 0) {

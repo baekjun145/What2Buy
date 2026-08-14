@@ -20,6 +20,7 @@ create table if not exists public.gift_keywords (
   keyword       text        not null unique,
   category_id   text        not null,   -- 네이버 쇼핑 카테고리 ID (예: 50000001)
   category_name text        not null,
+  audience      text        not null default 'adult' check (audience in ('adult', 'kids')),
   budgets       text[]      not null default '{}',   -- 예: {3~5만원대,5~10만원대}
   situations    text[]      not null default '{}',   -- 예: {생일,1주년}
   is_active     boolean     not null default true,   -- 끄면 추천 후보에서 제외
