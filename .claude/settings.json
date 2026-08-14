@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(timeout 60 vercel teams ls)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(curl -s --max-time 40 -X POST https://whatbuy.vercel.app/api/gift-ranking -H 'Content-Type: application/json' --data-binary @__TRACKED_VAR__/r2.json)",
+      "Bash(node -e 'process.stdout.write\\(crypto.randomUUID\\(\\)\\)')",
+      "Bash(curl -s --max-time 30 -X POST \"https://whatbuy.vercel.app/api/track\" -H \"Content-Type: application/json\" -d \"{\\\\\"sessionId\\\\\":\\\\\"$\\(node -e 'process.stdout.write\\(crypto.randomUUID\\(\\)\\)'\\)\\\\\",\\\\\"keyword\\\\\":\\\\\"목걸이\\\\\",\\\\\"action\\\\\":\\\\\"flip\\\\\",\\\\\"position\\\\\":1}\" -w \"  HTTP %{http_code}\\\\n\")",
+      "Bash(timeout 60 vercel domains ls)",
+      "Bash(timeout 60 vercel alias ls)",
+      "Bash(node -c ga-check.js)",
+      "Bash(rm -rf ga-profile)",
+      "Bash(node ga-check.js)",
+      "Bash(rm -rf gae-profile)",
+      "Bash(node ga-events.js)"
     ]
   }
 }

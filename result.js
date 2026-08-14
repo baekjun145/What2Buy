@@ -29,7 +29,20 @@ function getSessionId() {
 }
 
 // 클릭 수집. 실패해도 사용자 흐름을 막지 않는다.
+//
+// 같은 행동을 두 곳에 보낸다.
+//  - Supabase : 키워드·조건별로 직접 질의해 사전을 개선하는 용도
+//  - GA       : 유입/전환을 다른 채널 지표와 함께 보는 용도
 function track(action, keyword, position) {
+  // GA 이벤트. gtag가 차단당했거나 아직 안 떴을 수 있으니 존재를 확인하고 부른다.
+  if (typeof window.gtag === "function") {
+    window.gtag("event", action === "shopping_link" ? "shopping_link_click" : "card_flip", {
+      keyword,
+      position,
+      recommendation_id: currentRecommendationId,
+    });
+  }
+
   try {
     fetch("/api/track", {
       method: "POST",
