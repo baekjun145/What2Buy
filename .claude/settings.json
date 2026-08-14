@@ -21,7 +21,11 @@
       "Bash(node relcheck.js)",
       "PowerShell(Start-Process \"chrome.exe\" -ArgumentList \"--new-window\", $p)",
       "Bash(node -e \"require\\('fs'\\).writeFileSync\\('r3.json',JSON.stringify\\({age:'30대',gender:'여성',situation:'생일',budget:'3~5만원대'}\\),'utf8'\\)\")",
-      "Bash(curl -s --max-time 40 -X POST \"https://whatbuy.vercel.app/api/gift-ranking\" -H \"Content-Type: application/json\" --data-binary @r3.json)"
+      "Bash(curl -s --max-time 40 -X POST \"https://whatbuy.vercel.app/api/gift-ranking\" -H \"Content-Type: application/json\" --data-binary @r3.json)",
+      "Bash(rm -rf live-profile)",
+      "Bash(node live-result.js \"https://whatbuy.vercel.app\")",
+      "Bash(timeout 30 git ls-remote origin main)",
+      "Bash(git commit -q -m 'chore: 세션 중 추가된 권한 허용 목록 반영 *)"
     ]
   }
 }
