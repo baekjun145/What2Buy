@@ -492,7 +492,10 @@ module.exports = async function handler(req, res) {
           label: displayName(keyword),
           category: categoryId,
           categoryName: CATEGORY_NAMES[categoryId] || categoryId,
-          keywordRatio: Number(ratio.toFixed(1)),
+          // 화면에는 '100 만점 지수'로 보여주므로 100을 넘지 않게 자른다.
+          // 앵커로 다른 호출의 값을 끌어오는 과정에서 첫 호출의 최댓값을 넘을 수 있다.
+          // (순위는 아래 score로 매기고 그쪽은 자르지 않는다)
+          keywordRatio: Number(Math.min(ratio, 100).toFixed(1)),
           categoryWeight: Number(weight.toFixed(2)),
           score: Number((weight * ratio).toFixed(2)),
         });
