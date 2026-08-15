@@ -276,7 +276,12 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(100px, 20vw, 280px);
+  /* nowrap이라 한 줄로 뻗는데 .hero가 overflow:hidden이라 넓어지면 양끝이 잘린다.
+     실측하면 이 문구의 폭은 폰트 크기의 6.018배다("GIFT, SIMPLE", Pretendard 800).
+     뷰포트의 90%에 맞추려면 0.90 / 6.018 = 0.1496 → 15vw.
+     최소값(clamp의 하한)을 두면 좁은 화면에서 도로 잘리므로 두지 않는다.
+     상한 420px는 초광폭 화면에서 과하게 커지지 않게 하는 선. */
+  font-size: min(15vw, 420px);
   font-weight: 800;
   white-space: nowrap;
   color: rgba(var(--hero-text-primary-rgb), 0.04);
