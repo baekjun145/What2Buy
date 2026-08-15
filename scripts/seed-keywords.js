@@ -5,6 +5,11 @@
 // keyword가 unique라 upsert로 동작한다. 여러 번 돌려도 중복이 생기지 않고,
 // 코드 사전을 고친 뒤 다시 돌리면 DB가 그 값으로 갱신된다.
 // (DB에서 직접 수정한 값도 덮어쓰므로, DB를 손으로 고치기 시작한 뒤에는 주의)
+//
+// upsert는 넣고 고칠 뿐 지우지는 않는다. 코드에서 키워드를 빼도 DB 행은 그대로
+// 남아 계속 추천 후보가 되므로, 마지막에 코드에 없는 키워드를 is_active=false로 내린다.
+// (행을 삭제하지 않는 이유: gift_product_links가 keyword를 참조하고 있어
+//  지우면 큐레이션해 둔 상품 링크까지 함께 날아간다)
 
 const fs = require("fs");
 const path = require("path");
@@ -69,4 +74,40 @@ const rows = KEYWORDS.map((k) => ({
   for (const [name, count] of Object.entries(byCategory).sort((a, b) => b[1] - a[1])) {
     console.log(`  ${name.padEnd(14)} ${count}개`);
   }
+
+  // 코드에서 빠진 키워드를 후보에서 내린다.
+  const listResponse = await fetch(`${url}/rest/v1/gift_keywords?select=keyword&is_active=eq.true`, {
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+  });
+  const active = await listResponse.json();
+  const inCode = new Set(rows.map((r) => r.keyword));
+  const stale = active.map((r) => r.keyword).filter((k) => !inCode.has(k));
+
+  if (stale.length === 0) {
+    console.log("\n코드에 없는 활성 키워드: 없음");
+    return;
+  }
+
+  const inList = stale.map((k) => `"${k.replace(/"/g, '""')}"`).join(",");
+  const offResponse = await fetch(
+    `${url}/rest/v1/gift_keywords?keyword=in.(${encodeURIComponent(inList)})`,
+    {
+      method: "PATCH",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({ is_active: false, updated_at: new Date().toISOString() }),
+    }
+  );
+
+  if (!offResponse.ok) {
+    console.error(`\n비활성화 실패 (HTTP ${offResponse.status})`);
+    console.error((await offResponse.text()).slice(0, 300));
+    process.exit(1);
+  }
+
+  console.log(`\n코드에서 빠져 비활성화한 키워드 ${stale.length}개: ${stale.join(", ")}`);
 })();
