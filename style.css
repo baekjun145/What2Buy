@@ -912,12 +912,13 @@ img {
 }
 
 .chip-select {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 체크 표시(::after)와의 간격. 미선택 상태에도 자리를 잡아둬 클릭 시 글자가 밀리지 않는다 */
-  gap: 6px;
-  padding: 13px 12px;
+  /* 좌우 패딩을 같게 둬 글자가 칩 정중앙에 오게 한다.
+     체크 표시(::after)는 흐름에서 빼서 오른쪽에 겹쳐 놓으므로 중앙 정렬에 영향을 주지 않는다. */
+  padding: 13px 24px;
   border-radius: 12px;
   border: 1.5px solid transparent;
   background-color: var(--chip-bg);
@@ -933,10 +934,13 @@ img {
 
 .chip-select::after {
   content: "✓";
+  position: absolute;
+  right: 9px;
+  top: 50%;
   font-size: 12px;
   font-weight: 700;
   opacity: 0;
-  transform: scale(0.7);
+  transform: translateY(-50%) scale(0.7);
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
@@ -960,7 +964,7 @@ img {
 
 .chip-select.is-active::after {
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(-50%) scale(1);
 }
 
 .field-error {
