@@ -1015,14 +1015,27 @@ img {
   padding: 60px 0 120px;
 }
 
+/* 고정 navbar(76px) 아래로 36px */
 .result-page-section {
-  padding-top: 140px;
+  padding-top: 112px;
+}
+
+/* RESULT → 제목 → 조건 요약은 한 덩어리로 읽히는 머리말이라 서로 붙여 둔다.
+   공통 .section-title의 48px은 랜딩 페이지 섹션 간격 기준이라 여기서만 덮어쓴다.
+   line-height도 body의 1.65를 그대로 받으면 34px 제목 위아래로 여백이 더 붙는다. */
+.result-page-section .section-label {
+  margin-bottom: 8px;
+}
+
+.result-page-section .section-title {
+  line-height: 1.25;
+  margin-bottom: 12px;
 }
 
 .result-keyword-line {
   color: var(--text-secondary);
   font-size: 15px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .result-loading,
@@ -1362,8 +1375,9 @@ img {
     padding: 100px 0 32px;
   }
 
+  /* 모바일 navbar(64px) 아래로 24px */
   .result-page-section {
-    padding-top: 100px;
+    padding-top: 88px;
   }
 
   .form-group {
