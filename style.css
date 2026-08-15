@@ -1210,10 +1210,14 @@ img {
 }
 
 /* ---- 키워드 카드 뒷면 ---- */
+/* 지표의 조건·출처. 수치 위에 얹는 캡션이라 본문보다 한 톤 낮춘다.
+   12px여야 '20대 여성 · 최근 3개월 네이버 쇼핑 검색 기준'이 한 줄에 들어간다. */
 .card-back-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  word-break: keep-all;
+  margin-bottom: 10px;
 }
 
 .card-back-score {
@@ -1245,17 +1249,7 @@ img {
   color: var(--text-secondary);
   word-break: keep-all;
   overflow-wrap: anywhere;
-  margin-bottom: 6px;
-}
-
-/* 지표의 출처·기준. 본문보다 한 톤 낮춰 핵심 수치와 설명이 먼저 읽히게 한다. */
-.card-back-meta {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-muted);
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .card-body {
