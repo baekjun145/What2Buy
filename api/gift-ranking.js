@@ -277,6 +277,77 @@ async function fetchCategoryWeights(categoryIds, period, segment) {
   return weights;
 }
 
+// 한 카테고리 안의 키워드 비율을 같은 척도로 모은다.
+//
+// [왜 그냥 5개씩 잘라 부르면 안 되는가]
+// keywords 엔드포인트는 호출당 5개까지만 받는데, ratio가 호출 단위로 정규화된다.
+// 그래서 6개 이상을 그냥 나눠 부르면 같은 키워드도 어느 청크에 들어갔느냐에 따라
+// 값이 달라진다. 실측: '이솝핸드크림'이 2개짜리 청크에서 55.6, 향수와 같은 호출에서 15.5.
+// 이 상태로 점수를 매기면 후보가 적게 묶인 청크의 키워드가 부당하게 높게 나온다.
+//
+// 그래서 카테고리 가중치와 같은 방법을 쓴다. 첫 호출에서 가장 값이 큰 키워드를
+// 앵커로 잡고 이후 모든 청크에 끼워 넣은 뒤, 앵커 값의 비로 첫 호출의 척도에 맞춘다.
+// (가장 큰 값을 앵커로 쓰는 이유: 0이거나 데이터가 없으면 나눌 수 없기 때문)
+async function fetchKeywordRatios(categoryId, keywords, period, segment) {
+  const ask = (list) =>
+    callApi("/shopping/v1/category/keywords", {
+      ...period,
+      ...segment,
+      category: categoryId,
+      keyword: list.map((k) => ({ name: k, param: [k] })),
+    });
+
+  const collect = (json) => {
+    const out = new Map();
+    for (const result of json.results || []) {
+      const ratio = latestRatio(result);
+      if (ratio !== null) out.set(result.title, ratio); // 카테고리에 없는 키워드는 조용히 제외
+    }
+    return out;
+  };
+
+  // 5개 이하면 한 번에 끝나므로 정규화 문제 자체가 없다.
+  if (keywords.length <= MAX_KEYWORDS_PER_CALL) {
+    return { categoryId, ratios: collect(await ask(keywords)) };
+  }
+
+  const first = collect(await ask(keywords.slice(0, MAX_KEYWORDS_PER_CALL)));
+  const ratios = new Map(first);
+
+  // 첫 호출에서 값이 가장 큰 키워드를 앵커로 삼는다.
+  let anchor = null;
+  let anchorBase = 0;
+  for (const [keyword, ratio] of first) {
+    if (ratio > anchorBase) {
+      anchor = keyword;
+      anchorBase = ratio;
+    }
+  }
+
+  const rest = keywords.slice(MAX_KEYWORDS_PER_CALL);
+  const chunks = [];
+  const perChunk = anchor ? MAX_KEYWORDS_PER_CALL - 1 : MAX_KEYWORDS_PER_CALL;
+  for (let i = 0; i < rest.length; i += perChunk) {
+    chunks.push(rest.slice(i, i + perChunk));
+  }
+
+  const results = await Promise.all(
+    chunks.map((chunk) => ask(anchor ? [anchor, ...chunk] : chunk).then(collect))
+  );
+
+  for (const chunkRatios of results) {
+    const here = anchor ? chunkRatios.get(anchor) : null;
+    // 앵커가 이 호출에서 값을 못 받으면 맞출 기준이 없다. 원값을 그대로 쓴다.
+    const scale = here && here > 0 ? anchorBase / here : 1;
+    for (const [keyword, ratio] of chunkRatios) {
+      if (keyword === anchor) continue; // 앵커 값은 첫 호출 것을 유지한다
+      ratios.set(keyword, ratio * scale);
+    }
+  }
+
+  return { categoryId, ratios };
+}
+
 // 추천 키워드를 네이버 쇼핑에서 여는 링크.
 //
 // [왜 통합검색(search.naver.com)으로 보내는가]
@@ -406,33 +477,19 @@ module.exports = async function handler(req, res) {
     }
 
     // ---- 2단계 : 카테고리 내 키워드 비율 ----
-    const calls = [];
-    for (const [categoryId, items] of byCategory) {
-      for (let i = 0; i < items.length; i += MAX_KEYWORDS_PER_CALL) {
-        const chunk = items.slice(i, i + MAX_KEYWORDS_PER_CALL);
-        calls.push(
-          callApi("/shopping/v1/category/keywords", {
-            ...period,
-            ...segment,
-            category: categoryId,
-            keyword: chunk.map((k) => ({ name: k.keyword, param: [k.keyword] })),
-          }).then((json) => ({ categoryId, json }))
-        );
-      }
-    }
-
-    const chunkResults = await Promise.all(calls);
+    const chunkResults = await Promise.all(
+      [...byCategory].map(([categoryId, items]) =>
+        fetchKeywordRatios(categoryId, items.map((k) => k.keyword), period, segment)
+      )
+    );
 
     const scored = [];
-    for (const { categoryId, json } of chunkResults) {
-      for (const result of json.results || []) {
-        const ratio = latestRatio(result);
-        if (ratio === null) continue; // 카테고리에 없는 키워드는 조용히 제외
-
+    for (const { categoryId, ratios } of chunkResults) {
+      for (const [keyword, ratio] of ratios) {
         const weight = categoryWeight.get(categoryId) ?? 0;
         scored.push({
-          keyword: result.title,
-          label: displayName(result.title),
+          keyword,
+          label: displayName(keyword),
           category: categoryId,
           categoryName: CATEGORY_NAMES[categoryId] || categoryId,
           keywordRatio: Number(ratio.toFixed(1)),
