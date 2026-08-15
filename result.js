@@ -196,7 +196,7 @@ function renderCards(items, preferences, meta) {
 
     // 큐레이션된 상품 링크면 바로 그 상품으로 가고, 아니면 키워드 검색 결과로 간다.
     // 버튼 문구도 실제로 열리는 화면에 맞춘다.
-    const buyLabel = item.linkType === "product" ? "상품 보러 가기" : "네이버 쇼핑에서 보기";
+    const buyLabel = item.linkType === "product" ? "상품 보기" : "네이버 쇼핑에서 보기";
 
     // 이미지 조회에 실패한 항목은 사진 영역 없이 렌더링한다.
     const photo = item.image
