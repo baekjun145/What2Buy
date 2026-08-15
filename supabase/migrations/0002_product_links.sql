@@ -25,8 +25,8 @@ create table if not exists public.gift_product_links (
                  budget in ('3만원 미만', '3~5만원대', '5~10만원대', '10만원 이상')
                ),
 
-  -- [중요] smartstore.naver.com / brand.naver.com 상품 주소만 넣을 것.
-  -- search.shopping.naver.com(가격비교) 주소는 외부 유입이 차단되어 열리지 않는다.
+  -- [중요] search.shopping.naver.com(가격비교) 주소는 외부 유입이 차단되어 열리지 않는다.
+  -- 아래 제약은 0003_relax_product_url.sql 에서 완화된다(외부 쇼핑몰 링크 허용).
   product_url  text        not null check (
                  product_url ~ '^https://(smartstore|brand)\.naver\.com/'
                ),
