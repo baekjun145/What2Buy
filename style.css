@@ -15,6 +15,9 @@
   --bg-secondary: #f7f7f8;
   --card-bg: #ffffff;
   --border-color: rgba(20, 20, 20, 0.08);
+  /* 선택 칩 배경 (흰 카드 위에 올라가므로 --bg-secondary보다 한 단계 진하게) */
+  --chip-bg: #f1f2f5;
+  --chip-bg-hover: #e6e8ee;
   --shadow-color: rgba(20, 20, 20, 0.06);
   --shadow-color-strong: rgba(20, 20, 20, 0.1);
 
@@ -892,43 +895,72 @@ img {
   margin: 18px 0 10px;
 }
 
+/* 칩은 줄바꿈에 맡기지 않고 고정 열 수 그리드로 깔아 폭을 균일하게 맞춘다.
+   열 수는 칩 개수에 맞춰 chip-cols-* 로 지정한다(빈칸이 남지 않게). */
 .chip-select-row {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(var(--chip-cols, 3), minmax(0, 1fr));
   gap: 10px;
 }
 
-/* 같은 필드를 두 줄로 나눌 때(관계: 사적/공적) 아래 줄을 바짝 붙여 한 묶음으로 보이게 한다 */
-.chip-select-row-sub {
-  margin-top: 8px;
+.chip-cols-3 {
+  --chip-cols: 3;
+}
+
+.chip-cols-4 {
+  --chip-cols: 4;
 }
 
 .chip-select {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  padding: 10px 20px;
-  border-radius: 999px;
-  border: 1.5px solid var(--border-color);
-  background-color: var(--card-bg);
+  justify-content: center;
+  /* 체크 표시(::after)와의 간격. 미선택 상태에도 자리를 잡아둬 클릭 시 글자가 밀리지 않는다 */
+  gap: 6px;
+  padding: 13px 12px;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  background-color: var(--chip-bg);
   color: var(--text-secondary);
   font-family: inherit;
   font-size: 14px;
   font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chip-select::after {
+  content: "✓";
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
 .chip-select:hover {
-  border-color: rgba(var(--accent-color-rgb), 0.4);
-  color: var(--accent-color);
+  background-color: var(--chip-bg-hover);
+  color: var(--text-primary);
 }
 
+.chip-select:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* :hover 와 특이도가 같으므로 반드시 아래에 둬야 선택 상태가 이긴다 */
 .chip-select.is-active {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
   color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(var(--accent-color-rgb), 0.28);
+  box-shadow: 0 6px 16px rgba(var(--accent-color-rgb), 0.26);
+}
+
+.chip-select.is-active::after {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .field-error {
@@ -1320,6 +1352,18 @@ img {
 
   .form-group {
     padding: 24px;
+  }
+
+  /* 좁은 화면에서는 전부 2열로 접는다.
+     칩 개수가 홀수면 마지막 칩(= 홀수 번째 자식인 마지막 자식)이 한 줄을 다 쓰게 해
+     오른쪽에 빈칸이 남지 않도록 한다. */
+  .chip-cols-3,
+  .chip-cols-4 {
+    --chip-cols: 2;
+  }
+
+  .chip-select-row > .chip-select:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 
   .card-grid {
