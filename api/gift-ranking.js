@@ -289,6 +289,30 @@ function buildShoppingUrl(keyword) {
   return `https://search.naver.com/search.naver?${params.toString()}`;
 }
 
+// 손으로 큐레이션해 둔 상품 링크를 (키워드 × 예산)으로 찾는다.
+//
+// 상품 링크를 주던 쇼핑 검색 API가 종료되어 자동으로는 개별 상품에 연결할 수 없다.
+// 그래서 gift_product_links 에 채워 둔 것만 상품으로 보내고, 없으면 검색으로 보낸다.
+// 즉 표를 다 채우지 않아도 되고, 채운 만큼만 개별 상품 연결이 켜진다.
+//
+// 조회에 실패해도 추천은 그대로 나가야 하므로 빈 Map으로 넘어간다.
+async function loadProductLinks(keywords, budget) {
+  if (!supabase.isConfigured() || !budget || keywords.length === 0) return new Map();
+
+  try {
+    const inList = keywords.map((k) => `"${k.replace(/"/g, '""')}"`).join(",");
+    const rows = await supabase.select(
+      "gift_product_links",
+      `select=keyword,product_url,image_url&is_active=eq.true` +
+        `&budget=eq.${encodeURIComponent(budget)}` +
+        `&keyword=in.(${encodeURIComponent(inList)})`
+    );
+    return new Map((rows || []).map((row) => [row.keyword, row]));
+  } catch (error) {
+    return new Map();
+  }
+}
+
 // 상황·예산으로 후보를 좁힌다. 후보가 너무 적으면 예산 → 상황 순으로 조건을 푼다.
 //
 // audience는 절대 완화하지 않는다. 아기 선물을 찾는 사람에게 성인용 향수를 권하거나
@@ -414,13 +438,38 @@ module.exports = async function handler(req, res) {
     scored.sort((a, b) => b.score - a.score);
     const top = scored.slice(0, 3);
 
+    // 큐레이션 링크를 먼저 본다. 사진까지 지정돼 있으면 이미지 검색을 건너뛴다.
+    // (사진을 자동으로 가져오면 링크한 상품과 다른 물건이 찍혀 나올 수 있다)
+    const productLinks = await loadProductLinks(
+      top.map((item) => item.keyword),
+      budget
+    );
+
     // 상위 3개에만 이미지를 붙인다. 실패한 건 이미지 없이 그대로 나간다.
     const images = await Promise.all(
-      top.map((item) => fetchKeywordImage(item.keyword, { age, gender }))
+      top.map((item) =>
+        productLinks.get(item.keyword)?.image_url
+          ? null
+          : fetchKeywordImage(item.keyword, { age, gender })
+      )
     );
+
     top.forEach((item, i) => {
       Object.assign(item, images[i] || {});
-      item.searchUrl = buildShoppingUrl(item.keyword);
+
+      const link = productLinks.get(item.keyword);
+      if (link) {
+        item.searchUrl = link.product_url;
+        item.linkType = "product";
+        if (link.image_url) {
+          item.image = link.image_url;
+          item.imageFallback = "";
+          item.imageAlt = item.keyword;
+        }
+      } else {
+        item.searchUrl = buildShoppingUrl(item.keyword);
+        item.linkType = "search";
+      }
     });
 
     // 조회 이력을 남기고 그 id를 함께 내려보낸다. 브라우저는 이후 클릭 이벤트에

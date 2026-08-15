@@ -101,8 +101,9 @@ function buildSummary(preferences) {
     .join(" · ");
 }
 
-// 쇼핑 링크는 서버(api/gift-ranking)가 가격 필터까지 붙여 내려준다.
-// 혹시 없으면 통합검색 쇼핑 탭으로 대신 보낸다.
+// 링크는 서버(api/gift-ranking)가 정해서 내려준다.
+// 큐레이션된 상품이 있으면 그 상품 주소, 없으면 통합검색 쇼핑 탭 주소다.
+// 혹시 아무것도 못 받으면 여기서 통합검색으로 만들어 쓴다.
 // (쇼핑 전용 검색은 외부 유입을 차단하므로 폴백도 통합검색이어야 한다)
 function shoppingUrlFor(item) {
   if (item.searchUrl) return item.searchUrl;
@@ -193,6 +194,10 @@ function renderCards(items, preferences, meta) {
 
     const link = shoppingUrlFor(item);
 
+    // 큐레이션된 상품 링크면 바로 그 상품으로 가고, 아니면 키워드 검색 결과로 간다.
+    // 버튼 문구도 실제로 열리는 화면에 맞춘다.
+    const buyLabel = item.linkType === "product" ? "상품 보러 가기" : "네이버 쇼핑에서 보기";
+
     // 이미지 조회에 실패한 항목은 사진 영역 없이 렌더링한다.
     const photo = item.image
       ? `<div class="card-photo">
@@ -218,7 +223,7 @@ function renderCards(items, preferences, meta) {
           <p class="card-back-desc">
             ${item.categoryName} 분야에서 ${segment}의<br />최근 3개월 검색 클릭 지표예요
           </p>
-          <a class="btn btn-primary card-buy-btn" href="${link}" target="_blank" rel="noopener noreferrer">네이버 쇼핑에서 보기</a>
+          <a class="btn btn-primary card-buy-btn" href="${link}" target="_blank" rel="noopener noreferrer">${buyLabel}</a>
           <span class="card-back-hint">다시 보기</span>
         </div>
       </div>
