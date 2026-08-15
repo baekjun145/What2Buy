@@ -212,7 +212,7 @@ function renderCards(items, preferences, meta) {
         <div class="card-face card-front">
           ${photo}
           <div class="card-rank-body">
-            <p class="card-keyword">${item.keyword}</p>
+            <p class="card-keyword">${item.label || item.keyword}</p>
             <span class="card-category">${item.categoryName}</span>
             <span class="card-flip-hint"><i class="fa-solid fa-rotate"></i> 추천 이유 보기</span>
           </div>

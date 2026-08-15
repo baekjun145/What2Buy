@@ -21,6 +21,12 @@
 const { CATEGORY_NAMES, KEYWORDS } = require("../lib/gift-keywords");
 const supabase = require("../lib/supabase");
 
+// 카드에 표시할 이름. 브랜드 키워드를 일반명으로 바꿔 보여주기 위한 것이다.
+// (순위·검색 링크·사진·통계는 전부 실제 keyword로 돌아간다)
+// DB 사전에는 label 컬럼이 없으므로 코드 사전에서만 가져온다.
+const LABELS = new Map(KEYWORDS.filter((k) => k.label).map((k) => [k.keyword, k.label]));
+const displayName = (keyword) => LABELS.get(keyword) || keyword;
+
 // 키워드 사전은 DB(gift_keywords)를 우선 쓰고, 못 읽으면 코드에 있는 사전으로 돌아간다.
 // DB가 비었거나 장애여도 추천은 계속 동작해야 한다.
 // 워밍된 인스턴스 안에서는 잠깐 캐시해 요청마다 DB를 때리지 않는다.
@@ -426,6 +432,7 @@ module.exports = async function handler(req, res) {
         const weight = categoryWeight.get(categoryId) ?? 0;
         scored.push({
           keyword: result.title,
+          label: displayName(result.title),
           category: categoryId,
           categoryName: CATEGORY_NAMES[categoryId] || categoryId,
           keywordRatio: Number(ratio.toFixed(1)),
@@ -436,7 +443,18 @@ module.exports = async function handler(req, res) {
     }
 
     scored.sort((a, b) => b.score - a.score);
-    const top = scored.slice(0, 3);
+
+    // 표시명이 같은 것은 한 장만 남긴다. 브랜드 키워드를 일반명으로 보여주기 때문에,
+    // 그냥 상위 3개를 자르면 '립스틱' 카드가 세 장 나올 수 있다.
+    // 점수순으로 이미 정렬돼 있으므로 먼저 만나는 쪽(= 가장 높은 점수)이 남는다.
+    const seenLabels = new Set();
+    const top = [];
+    for (const item of scored) {
+      if (seenLabels.has(item.label)) continue;
+      seenLabels.add(item.label);
+      top.push(item);
+      if (top.length === 3) break;
+    }
 
     // 큐레이션 링크를 먼저 본다. 사진까지 지정돼 있으면 이미지 검색을 건너뛴다.
     // (사진을 자동으로 가져오면 링크한 상품과 다른 물건이 찍혀 나올 수 있다)
