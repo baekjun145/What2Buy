@@ -192,11 +192,9 @@ function renderCards(items, preferences, meta) {
     const card = document.createElement("div");
     card.className = "card-flip";
 
+    // 큐레이션된 상품 링크가 있으면 그 상품으로, 없으면 키워드 검색 결과로 간다.
+    // 버튼 문구는 어느 쪽이든 '상품 보기'로 통일한다(카드마다 문구가 달라 보이지 않게).
     const link = shoppingUrlFor(item);
-
-    // 큐레이션된 상품 링크면 바로 그 상품으로 가고, 아니면 키워드 검색 결과로 간다.
-    // 버튼 문구도 실제로 열리는 화면에 맞춘다.
-    const buyLabel = item.linkType === "product" ? "상품 보기" : "네이버 쇼핑에서 보기";
 
     // 이미지 조회에 실패한 항목은 사진 영역 없이 렌더링한다.
     const photo = item.image
@@ -223,7 +221,7 @@ function renderCards(items, preferences, meta) {
           <p class="card-back-desc">
             ${item.categoryName} 분야에서 ${segment}의<br />최근 3개월 검색 클릭 지표예요
           </p>
-          <a class="btn btn-primary card-buy-btn" href="${link}" target="_blank" rel="noopener noreferrer">${buyLabel}</a>
+          <a class="btn btn-primary card-buy-btn" href="${link}" target="_blank" rel="noopener noreferrer">상품 보기</a>
           <span class="card-back-hint">다시 보기</span>
         </div>
       </div>
