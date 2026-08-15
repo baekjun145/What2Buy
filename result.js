@@ -220,7 +220,9 @@ function renderCards(items, preferences, meta) {
         <div class="card-face card-back">
           <p class="card-back-label">${segment} 인기도</p>
           <p class="card-back-score">${item.keywordRatio}<span class="card-back-score-unit">/ 100</span></p>
-          <p class="card-back-desc">${item.categoryName} 분야에서 가장 많이 클릭된 선물이 100이에요</p>
+          <p class="card-back-desc">
+            ${item.categoryName} 분야에서<br />가장 많이 클릭된 선물을<br />100으로 둔 상대 지수예요
+          </p>
           <p class="card-back-meta">${segment} · 최근 3개월 네이버 쇼핑 검색 기준</p>
           <a class="btn btn-primary card-buy-btn" href="${link}" target="_blank" rel="noopener noreferrer">상품 보기</a>
           <button type="button" class="card-ghost-btn card-back-hint">
