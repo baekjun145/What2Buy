@@ -24,6 +24,10 @@
   /* ---- 텍스트 ---- */
   --text-primary: #222222;
   --text-secondary: #5a5a5a;
+  /* 흰 배경에서 4.55:1 — WCAG AA(4.5:1)를 지키는 선에서 가장 연한 회색.
+     본문보다 한 톤 낮춰야 하는 보조 정보(출처·기준)에만 쓴다.
+     --text-tertiary(2.6:1)는 AA에 못 미치므로 읽어야 하는 문구에는 쓰지 말 것. */
+  --text-muted: #767676;
   --text-tertiary: #9a9a9a;
 
   /* ---- 레이아웃 ---- */
@@ -1129,7 +1133,8 @@ img {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 32px;
+  /* 좌우를 좁히면 문장이 더 잘게 끊긴다. 가로는 넉넉히 두고 세로만 줄인다. */
+  padding: 28px 20px;
   transform: rotateY(180deg);
 }
 
@@ -1220,7 +1225,8 @@ img {
   font-weight: 800;
   line-height: 1.1;
   color: var(--accent-color);
-  margin-bottom: 12px;
+  /* 수치와 설명이 붙어 보이지 않도록 띄운다 (핵심 수치를 도드라지게) */
+  margin-bottom: 18px;
 }
 
 /* 숫자만 크게 두면 무엇을 재는 값인지 알 수 없어 단위를 병기한다. */
@@ -1230,10 +1236,24 @@ img {
   color: rgba(var(--accent-color-rgb), 0.6);
 }
 
+/* 한국어는 기본값이면 '100으 / 로' 처럼 낱말 가운데서 끊긴다.
+   keep-all 로 어절(띄어쓰기) 단위로만 끊고, 끊을 곳이 없는 긴 토큰만 예외로 쪼갠다. */
 .card-back-desc {
   font-size: 13px;
   line-height: 1.6;
   color: var(--text-secondary);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  margin-bottom: 6px;
+}
+
+/* 지표의 출처·기준. 본문보다 한 톤 낮춰 핵심 수치와 설명이 먼저 읽히게 한다. */
+.card-back-meta {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
   margin-bottom: 22px;
 }
 
