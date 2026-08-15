@@ -814,7 +814,8 @@ img {
    recommend.html 전용 스타일
    ========================================================= */
 .recommend-page-hero {
-  padding: 160px 0 40px;
+  /* 고정 navbar(76px) 아래로 44px 여백 */
+  padding: 120px 0 40px;
   text-align: center;
   background-color: var(--bg-secondary);
 }
@@ -1309,7 +1310,8 @@ img {
   }
 
   .recommend-page-hero {
-    padding: 120px 0 32px;
+    /* 모바일 navbar(64px) 아래로 36px 여백 */
+    padding: 100px 0 32px;
   }
 
   .result-page-section {
