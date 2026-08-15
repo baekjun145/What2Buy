@@ -187,12 +187,6 @@ function renderCards(items, preferences, meta) {
       .filter(Boolean)
       .join(" ") || "전체";
 
-  // 네이버 검색 링크로는 가격을 걸 수 없다(통합검색이 minPrice/maxPrice를 무시함).
-  // 그래서 어떤 가격대를 보면 되는지 카드에서 직접 알려준다.
-  const budgetHint = preferences.budget
-    ? `<p class="card-back-budget"><i class="fa-solid fa-tag"></i> 쇼핑에서 <strong>${preferences.budget}</strong>로 골라보세요</p>`
-    : "";
-
   items.forEach((item, index) => {
     const card = document.createElement("div");
     card.className = "card-flip";
@@ -224,7 +218,6 @@ function renderCards(items, preferences, meta) {
           <p class="card-back-desc">
             ${item.categoryName} 분야에서 ${segment}의<br />최근 3개월 검색 클릭 지표예요
           </p>
-          ${budgetHint}
           <a class="btn btn-primary card-buy-btn" href="${link}" target="_blank" rel="noopener noreferrer">네이버 쇼핑에서 보기</a>
           <span class="card-back-hint">다시 보기</span>
         </div>
