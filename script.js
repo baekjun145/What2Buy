@@ -203,7 +203,8 @@ function initChatWidget() {
     const bubble = document.createElement("div");
     bubble.className = `chat-message chat-message-${role === "user" ? "user" : "bot"}`;
     if (isError) bubble.classList.add("chat-message-error");
-    bubble.textContent = text;
+    // pre-wrap 이므로 앞뒤 공백/줄바꿈이 그대로 보인다
+    bubble.textContent = String(text ?? "").trim();
     messagesEl.appendChild(bubble);
     messagesEl.scrollTop = messagesEl.scrollHeight;
     return bubble;
