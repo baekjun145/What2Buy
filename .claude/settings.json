@@ -70,7 +70,9 @@
       "PowerShell(cd \"c:\\\\Users\\\\baekj\\\\OneDrive\\\\바탕 화면\\\\whatbuy\"; node --check result.js; if \\($?\\) { Select-String -Path result.js -Pattern \"buyLabel|상품 보기|네이버 쇼핑에서 보기\" | ForEach-Object { $_.LineNumber.ToString\\(\\) + ': ' + $_.Line.Trim\\(\\) } })",
       "PowerShell(cd \"c:\\\\Users\\\\baekj\\\\OneDrive\\\\바탕 화면\\\\whatbuy\"; node --check result.js; if \\($?\\) { node --check api/gift-ranking.js }; if \\($?\\) { \"--- 남은 tertiary 사용처 \\(결과 카드 영역\\) ---\"; Select-String -Path style.css -Pattern \"text-tertiary\" | ForEach-Object { $_.LineNumber.ToString\\(\\) + ': ' + $_.Line.Trim\\(\\) } })",
       "PowerShell($paths = @\\(\"$env:ProgramFiles\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\", \"${env:ProgramFiles\\(x86\\)}\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\", \"$env:LOCALAPPDATA\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\", \"$env:ProgramFiles\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\", \"${env:ProgramFiles\\(x86\\)}\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\"\\); foreach \\($p in $paths\\) { if \\(Test-Path $p\\) { \"찾음: $p\" } })",
-      "PowerShell(node \"C:\\\\Users\\\\baekj\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-baekj-OneDrive-------whatbuy\\\\125a8466-7102-4ebc-9bb1-cc15b9b4c46d\\\\scratchpad\\\\measure-hero.js\")"
+      "PowerShell(node \"C:\\\\Users\\\\baekj\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-baekj-OneDrive-------whatbuy\\\\125a8466-7102-4ebc-9bb1-cc15b9b4c46d\\\\scratchpad\\\\measure-hero.js\")",
+      "PowerShell(node \"C:\\\\Users\\\\baekj\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-baekj-OneDrive-------whatbuy\\\\125a8466-7102-4ebc-9bb1-cc15b9b4c46d\\\\scratchpad\\\\set-images.js\")",
+      "PowerShell($r = \"c:\\\\Users\\\\baekj\\\\OneDrive\\\\바탕 화면\\\\whatbuy\"; \"git status:\"; git -C $r status --short; \"---\"; \"local HEAD : \" + \\(git -C $r rev-parse --short HEAD\\); \"origin/main: \" + \\(git -C $r rev-parse --short origin/main\\))"
     ]
   }
 }
