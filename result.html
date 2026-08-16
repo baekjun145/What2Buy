@@ -66,6 +66,23 @@
         </div>
 
         <div id="cardGrid" class="card-grid"></div>
+
+        <!-- 만족도 조사 : 추천이 실제로 나온 뒤에만 보인다 (result.js가 hidden 해제) -->
+        <div id="ratingBox" class="rating-box" hidden>
+          <p class="rating-label">RATE THIS</p>
+          <p class="rating-title">이번 추천, 만족하셨나요?</p>
+
+          <div class="rating-stars" id="ratingStars" role="radiogroup" aria-label="추천 만족도">
+            <button type="button" class="rating-star" data-score="1" role="radio" aria-checked="false" aria-label="1점">★</button>
+            <button type="button" class="rating-star" data-score="2" role="radio" aria-checked="false" aria-label="2점">★</button>
+            <button type="button" class="rating-star" data-score="3" role="radio" aria-checked="false" aria-label="3점">★</button>
+            <button type="button" class="rating-star" data-score="4" role="radio" aria-checked="false" aria-label="4점">★</button>
+            <button type="button" class="rating-star" data-score="5" role="radio" aria-checked="false" aria-label="5점">★</button>
+          </div>
+
+          <p class="rating-help" id="ratingHelp">별을 눌러 5점 만점으로 평가해 주세요</p>
+          <p class="rating-note">추천 품질을 개선하는 데만 씁니다. 다시 눌러 점수를 바꿀 수 있어요.</p>
+        </div>
       </div>
     </section>
 

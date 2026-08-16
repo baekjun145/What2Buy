@@ -69,7 +69,7 @@
     <section id="service" class="section fade-in-section">
       <div class="container">
         <p class="section-label">SERVICE INTRO</p>
-        <h2 class="section-title">모두의 인기순 말고,<br />그 사람 또래의 인기순으로</h2>
+        <h2 class="section-title">선물은 인기순이 아니라<br />그 사람 순이어야죠</h2>
 
         <!-- 여기 문구는 실제 동작과 어긋나면 안 된다.
              지금 추천에 반영되는 값은 연령대·성별·상황·예산 넷이다.
@@ -80,13 +80,14 @@
             <strong>받는 사람이 누구인지</strong>에 따라 달라져야 하죠.
           </p>
           <p>
-            What2Buy는 <strong>연령대와 성별, 상황과 예산</strong>을 먼저 물어봅니다.
-            그리고 그 조건에 맞는 선물 후보 중에서,
-            <strong>같은 또래가 최근 3개월간 실제로 가장 많이 클릭한 순서</strong>로 딱 3가지만 골라드립니다.
+            What2Buy는 <strong>연령대·성별, 상황과 예산</strong>은 물론
+            <strong>MBTI와 취미까지</strong> 물어봅니다. 그 조건에 맞는 후보를
+            <strong>최근 3개월 네이버 쇼핑 클릭 데이터</strong>로 추린 뒤,
+            그 사람에게 어울리는 순서로 딱 3가지만 골라드립니다.
           </p>
           <p>
             왜 그 3가지인지도 숨기지 않습니다. 카드를 뒤집으면
-            <strong>추천 근거가 숫자로</strong> 나옵니다.
+            <strong>고른 이유와 인기 지수</strong>가 함께 나옵니다.
           </p>
 
           <ul class="intro-points">
@@ -94,11 +95,6 @@
             <li><strong>딱 3장</strong> — 수백 개를 훑을 필요가 없어요</li>
             <li><strong>근거 공개</strong> — 네이버 쇼핑인사이트 클릭 데이터 기준</li>
           </ul>
-
-          <p class="intro-cta-line">
-            <a href="recommend.html" class="btn btn-primary">선물 추천받기 →</a>
-            <span class="intro-cta-note">1분이면 끝나요 · 로그인 없이</span>
-          </p>
         </div>
       </div>
     </section>
@@ -280,6 +276,49 @@
 
         <!-- 아래 칩은 recommend.html의 실제 선택지와 같아야 한다.
              lib/gift-keywords.js의 BUDGET_TIERS가 원본이다. -->
+        <div class="category-group">
+          <h3 class="category-title">MBTI <span class="category-optional">선택</span></h3>
+          <div class="chip-row">
+            <span class="chip chip-lg">ISTJ</span>
+            <span class="chip chip-lg">ISFJ</span>
+            <span class="chip chip-lg">INFJ</span>
+            <span class="chip chip-lg">INTJ</span>
+            <span class="chip chip-lg">ISTP</span>
+            <span class="chip chip-lg">ISFP</span>
+            <span class="chip chip-lg">INFP</span>
+            <span class="chip chip-lg">INTP</span>
+            <span class="chip chip-lg">ESTP</span>
+            <span class="chip chip-lg">ESFP</span>
+            <span class="chip chip-lg">ENFP</span>
+            <span class="chip chip-lg">ENTP</span>
+            <span class="chip chip-lg">ESTJ</span>
+            <span class="chip chip-lg">ESFJ</span>
+            <span class="chip chip-lg">ENFJ</span>
+            <span class="chip chip-lg">ENTJ</span>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <h3 class="category-title">취미·성향 <span class="category-optional">최대 4개</span></h3>
+          <div class="chip-row">
+            <span class="chip chip-lg">집순이·집돌이</span>
+            <span class="chip chip-lg">아웃도어·여행</span>
+            <span class="chip chip-lg">운동·헬스</span>
+            <span class="chip chip-lg">요리·베이킹</span>
+            <span class="chip chip-lg">커피·디저트</span>
+            <span class="chip chip-lg">독서</span>
+            <span class="chip chip-lg">게임</span>
+            <span class="chip chip-lg">음악</span>
+            <span class="chip chip-lg">사진·영상</span>
+            <span class="chip chip-lg">뷰티·패션</span>
+            <span class="chip chip-lg">반려동물</span>
+            <span class="chip chip-lg">자기계발·공부</span>
+            <span class="chip chip-lg">캠핑</span>
+            <span class="chip chip-lg">IT·가젯</span>
+            <span class="chip chip-lg">인테리어·집꾸미기</span>
+          </div>
+        </div>
+
         <div class="category-group">
           <h3 class="category-title">예산</h3>
           <div class="chip-row">

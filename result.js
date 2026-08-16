@@ -150,6 +150,7 @@ async function fetchRanking(preferences) {
 
     currentRecommendationId = data.recommendationId ?? null;
     renderCards(data.items || [], preferences, data.meta || {});
+    initRating();
   } catch (error) {
     showResultError("서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.");
   } finally {
@@ -224,6 +225,7 @@ function renderCards(items, preferences, meta) {
         <div class="card-face card-back">
           <p class="card-back-label">${segment} · 최근 3개월 네이버 쇼핑 기준</p>
           <p class="card-back-score">${item.keywordRatio}<span class="card-back-score-unit">/ 100</span></p>
+          ${item.reason ? `<p class="card-back-reason">${item.reason}</p>` : ""}
           <p class="card-back-desc">
             ${item.categoryName} 분야에서<br />가장 많이 클릭된 선물을<br />100으로 둔 상대 지수예요
           </p>
@@ -268,5 +270,68 @@ function renderCards(items, preferences, meta) {
     });
 
     cardGrid.appendChild(card);
+  });
+}
+
+/* ---------------------------------------------------------
+   만족도(별점)
+   추천이 실제로 나온 뒤에만 보여준다. 결과가 없는데 평가를 받을 수는 없다.
+   --------------------------------------------------------- */
+let ratingBound = false;
+
+function initRating() {
+  const box = document.getElementById("ratingBox");
+  if (!box) return;
+  box.hidden = false;
+
+  if (ratingBound) return;
+  ratingBound = true;
+
+  const stars = [...box.querySelectorAll(".rating-star")];
+  const help = document.getElementById("ratingHelp");
+
+  const paint = (score) => {
+    stars.forEach((star) => {
+      const on = Number(star.dataset.score) <= score;
+      star.classList.toggle("is-on", on);
+      star.setAttribute("aria-checked", Number(star.dataset.score) === score ? "true" : "false");
+    });
+  };
+
+  stars.forEach((star) => {
+    // 마우스를 올린 동안만 미리 칠해 보여준다.
+    star.addEventListener("mouseenter", () => paint(Number(star.dataset.score)));
+
+    star.addEventListener("click", () => {
+      const score = Number(star.dataset.score);
+      paint(score);
+      help.textContent = "평가해 주셔서 고마워요";
+      box.classList.add("is-rated");
+
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "result_rating", {
+          rating: score,
+          recommendation_id: currentRecommendationId,
+        });
+      }
+
+      // 저장 실패는 사용자에게 알리지 않는다. 별점은 부가 기능이다.
+      fetch("/api/rate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: getSessionId(),
+          recommendationId: currentRecommendationId,
+          rating: score,
+        }),
+        keepalive: true,
+      }).catch(() => {});
+    });
+  });
+
+  // 마우스가 별 영역을 벗어나면 고른 점수로 되돌린다.
+  box.querySelector(".rating-stars").addEventListener("mouseleave", () => {
+    const chosen = stars.filter((s) => s.getAttribute("aria-checked") === "true")[0];
+    paint(chosen ? Number(chosen.dataset.score) : 0);
   });
 }

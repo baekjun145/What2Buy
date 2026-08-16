@@ -1,4 +1,4 @@
-// Vercel 서버리스 함수 — 선물 키워드 랭킹
+﻿// Vercel 서버리스 함수 — 선물 키워드 랭킹
 //
 // 네이버 쇼핑 "검색" API는 2026-07-31 종료되어 상품(이름·가격·이미지·링크)을 가져올 수 없다.
 // 대신 NAVER API HUB의 Data Lab 쇼핑인사이트로 "어떤 선물 키워드가 이 연령·성별에게
@@ -20,6 +20,7 @@
 
 const { CATEGORY_NAMES, KEYWORDS, INTEREST_KEYWORDS } = require("../lib/gift-keywords");
 const supabase = require("../lib/supabase");
+const curator = require("../lib/curator");
 
 // 관심사를 고르면 3장 중 앞 두 자리를 취향에 맞는 후보로 먼저 채운다.
 //
@@ -463,7 +464,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const { age, gender, relation, situation, budget, sessionId } = req.body || {};
+  const { age, gender, relation, situation, budget, mbti, sessionId } = req.body || {};
   // 관심사는 최대 4개. 그 이상 오면 앞에서 자른다.
   const interests = Array.isArray(req.body?.interests) ? req.body.interests.slice(0, 4) : [];
   const startedAt = Date.now();
@@ -558,23 +559,48 @@ module.exports = async function handler(req, res) {
     // (어떤 카드가 취향 때문에 뽑혔는지는 matchesInterest로 표시한다)
     top.sort((a, b) => b.score - a.score);
 
+    // ---- 3단계 : 큐레이터(LLM)가 후보 안에서 3개를 고르고 이유를 붙인다 ----
+    // MBTI·관계처럼 클릭 데이터에 없는 조건은 여기서만 반영된다.
+    // 표시명이 겹치지 않는 후보만 넘겨 '립스틱' 카드가 여러 장 되는 것을 막는다.
+    const shortlist = [];
+    const shortlistLabels = new Set();
+    for (const item of scored) {
+      if (shortlistLabels.has(item.label)) continue;
+      shortlistLabels.add(item.label);
+      shortlist.push(item);
+      if (shortlist.length >= 8) break;
+    }
+
+    const curated = await curator.curate(shortlist, {
+      age,
+      gender,
+      relation,
+      situation,
+      budget,
+      mbti,
+      interests,
+    });
+
+    // LLM이 실패하면 위에서 만든 데이터 기반 3장을 그대로 쓴다.
+    const finalItems = curated.source === "llm" ? curated.items.slice(0, 3) : top;
+
     // 큐레이션 링크를 먼저 본다. 사진까지 지정돼 있으면 이미지 검색을 건너뛴다.
     // (사진을 자동으로 가져오면 링크한 상품과 다른 물건이 찍혀 나올 수 있다)
     const productLinks = await loadProductLinks(
-      top.map((item) => item.keyword),
+      finalItems.map((item) => item.keyword),
       budget
     );
 
     // 상위 3개에만 이미지를 붙인다. 실패한 건 이미지 없이 그대로 나간다.
     const images = await Promise.all(
-      top.map((item) =>
+      finalItems.map((item) =>
         productLinks.get(item.keyword)?.image_url
           ? null
           : fetchKeywordImage(item.keyword, { age, gender })
       )
     );
 
-    top.forEach((item, i) => {
+    finalItems.forEach((item, i) => {
       Object.assign(item, images[i] || {});
 
       const link = productLinks.get(item.keyword);
@@ -602,13 +628,13 @@ module.exports = async function handler(req, res) {
       situation: situation || null,
       budget: budget || null,
       relaxed,
-      result_keywords: top.map((item) => item.keyword),
+      result_keywords: finalItems.map((item) => item.keyword),
       candidate_count: candidates.length,
       duration_ms: Date.now() - startedAt,
     });
 
     res.status(200).json({
-      items: top,
+      items: finalItems,
       recommendationId,
       meta: {
         candidateCount: candidates.length,
@@ -616,6 +642,7 @@ module.exports = async function handler(req, res) {
         relaxed, // 조건을 완화했다면 어떤 축을 풀었는지
         segment: { age: age || null, gender: gender || null },
         dictionarySource: dictionary.source, // 'db' | 'code'
+        curatedBy: curated.source, // 'llm' | 'score' (LLM 실패 시 데이터 순서로 되돌아감)
         period,
       },
     });
