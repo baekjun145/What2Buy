@@ -561,10 +561,19 @@ module.exports = async function handler(req, res) {
 
     // ---- 3단계 : 큐레이터(LLM)가 후보 안에서 3개를 고르고 이유를 붙인다 ----
     // MBTI·관계처럼 클릭 데이터에 없는 조건은 여기서만 반영된다.
+    //
+    // [취향을 고른 경우]
+    // 취향에 맞는 후보가 3개 이상이면 그것만 넘긴다. 예전에는 취향과 무관하게
+    // 상위 8개를 넘겼는데, 그러면 위에서 만든 취향 자리 배정이 LLM 단계에서
+    // 통째로 무시됐다. (뷰티·인테리어를 골랐는데 잠옷이 올라오던 문제)
+    // 3개가 안 되면 자리를 못 채우므로 전체 후보를 그대로 쓴다.
+    const matched = scored.filter((item) => item.matchesInterest);
+    const pool = boosted.size > 0 && matched.length >= 3 ? matched : scored;
+
     // 표시명이 겹치지 않는 후보만 넘겨 '립스틱' 카드가 여러 장 되는 것을 막는다.
     const shortlist = [];
     const shortlistLabels = new Set();
-    for (const item of scored) {
+    for (const item of pool) {
       if (shortlistLabels.has(item.label)) continue;
       shortlistLabels.add(item.label);
       shortlist.push(item);
