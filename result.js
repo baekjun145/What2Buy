@@ -215,6 +215,7 @@ function renderCards(items, preferences, meta) {
           <div class="card-rank-body">
             <p class="card-keyword">${item.label || item.keyword}</p>
             <span class="card-category">${item.categoryName}</span>
+            ${item.matchesInterest ? '<span class="card-interest-tag">고른 취향과 맞아요</span>' : ""}
             <button type="button" class="card-ghost-btn card-flip-hint">
               <i class="fa-solid fa-circle-info"></i> 추천 이유 보기
             </button>

@@ -156,12 +156,14 @@ function updateSummary() {
   // '성별 무관'은 조건이 아니라 "안 따짐"이므로 요약에 적지 않는다.
   const genderLabel = selection.gender === "성별 무관" ? null : selection.gender;
   const person = [selection.age, genderLabel].filter(Boolean).join(" ");
+  // 관심사는 쉼표로 잇는다. 구분자로 쓰는 '·'로 이으면
+  // 'IT·가젯' 같은 값이 두 개로 갈라져 보인다.
   const parts = [
     person,
     selection.relation,
     selection.situation,
     selection.mbti,
-    selection.interests.join("·"),
+    selection.interests.join(", "),
     selection.budget,
   ].filter(Boolean);
 

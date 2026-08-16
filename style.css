@@ -900,28 +900,6 @@ img {
 /* =========================================================
    recommend.html 전용 스타일
    ========================================================= */
-.recommend-page-hero {
-  /* 고정 navbar(76px) 아래로 44px 여백 */
-  padding: 120px 0 40px;
-  text-align: center;
-  background-color: var(--bg-secondary);
-}
-
-.recommend-page-hero .section-label {
-  display: inline-block;
-}
-
-.recommend-page-hero .section-title {
-  margin-bottom: 18px;
-}
-
-.recommend-page-subtitle {
-  font-size: 16px;
-  color: var(--text-secondary);
-  max-width: 520px;
-  margin: 0 auto;
-}
-
 .recommend-form-section {
   padding: 112px 0 120px;
 }
@@ -1035,46 +1013,13 @@ img {
   font-weight: 600;
 }
 
-.form-group {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-card);
-  padding: 32px;
-  margin-bottom: 24px;
-}
-
-.form-group-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 19px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 6px;
-}
-
-.required-badge,
 .optional-badge {
   font-size: 11px;
   font-weight: 700;
   padding: 2px 9px;
   border-radius: 999px;
-}
-
-.required-badge {
-  color: #ffffff;
-  background-color: var(--accent-color);
-}
-
-.optional-badge {
-  color: var(--text-tertiary);
-  background-color: var(--bg-secondary);
-}
-
-.form-group-desc {
-  font-size: 13px;
-  color: var(--text-tertiary);
-  margin-bottom: 20px;
+  color: var(--text-muted);
+  background-color: var(--chip-bg);
 }
 
 .form-subtitle {
@@ -1162,39 +1107,6 @@ img {
   font-size: 13px;
   font-weight: 600;
   color: var(--accent-color);
-}
-
-.keyword-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  background-color: var(--bg-secondary);
-  border: 1px dashed var(--border-color);
-  border-radius: var(--radius-card);
-  padding: 20px 24px;
-  margin-bottom: 28px;
-}
-
-.keyword-preview-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-tertiary);
-}
-
-.keyword-preview-text {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text-tertiary);
-}
-
-.keyword-preview-text.has-keyword {
-  color: var(--accent-color);
-}
-
-.submit-btn {
-  width: 100%;
-  justify-content: center;
-  font-size: 17px;
 }
 
 /* ---------------------------------------------------------
@@ -1388,6 +1300,19 @@ img {
   color: var(--text-secondary);
 }
 
+/* 인기순이 아니라 고른 취향 때문에 뽑힌 카드임을 밝힌다. */
+.card-interest-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: rgba(var(--accent-color-rgb), 0.1);
+  color: var(--accent-color);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 /* ---- 키워드 카드 뒷면 ---- */
 /* 지표의 조건·출처. 수치 위에 얹는 캡션이라 본문보다 한 톤 낮춘다.
    12px여야 '20대 여성 · 최근 3개월 네이버 쇼핑 검색 기준'이 한 줄에 들어간다. */
@@ -1564,18 +1489,17 @@ img {
     height: min(70vh, 520px);
   }
 
-  .recommend-page-hero {
-    /* 모바일 navbar(64px) 아래로 36px 여백 */
-    padding: 100px 0 32px;
-  }
-
   /* 모바일 navbar(64px) 아래로 24px */
   .result-page-section {
     padding-top: 88px;
   }
 
-  .form-group {
-    padding: 24px;
+  .recommend-form-section {
+    padding-top: 88px;
+  }
+
+  .step-title {
+    font-size: 24px;
   }
 
   /* 좁은 화면에서는 전부 2열로 접는다.
