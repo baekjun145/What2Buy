@@ -923,11 +923,116 @@ img {
 }
 
 .recommend-form-section {
-  padding: 56px 0 120px;
+  padding: 112px 0 120px;
 }
 
 .recommend-form {
   max-width: 720px;
+}
+
+/* ---- 단계별 폼 ---- */
+.step-head {
+  margin-bottom: 36px;
+}
+
+.step-head-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.step-counter {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.step-counter strong {
+  color: var(--accent-color);
+  font-weight: 800;
+}
+
+.step-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  word-break: keep-all;
+}
+
+.step-progress {
+  height: 6px;
+  border-radius: 999px;
+  background-color: var(--chip-bg);
+  overflow: hidden;
+}
+
+.step-progress-bar {
+  display: block;
+  height: 100%;
+  width: 20%;
+  border-radius: 999px;
+  background-color: var(--accent-color);
+  transition: width 0.35s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.step-title {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 28px;
+  word-break: keep-all;
+}
+
+.step-count {
+  margin-left: 6px;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+.step-note {
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--text-muted);
+  word-break: keep-all;
+}
+
+.step-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+/* '다음'이 주 동작이므로 남은 자리를 전부 차지하게 둔다. */
+.step-next {
+  flex: 1;
+  justify-content: center;
+}
+
+.step-back {
+  background-color: transparent;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.step-back:hover {
+  border-color: rgba(var(--accent-color-rgb), 0.4);
+  color: var(--accent-color);
+}
+
+.step-summary {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+  word-break: keep-all;
+}
+
+.step-summary.has-keyword {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .form-group {

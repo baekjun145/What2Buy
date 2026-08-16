@@ -130,6 +130,9 @@ async function fetchRanking(preferences) {
         relation: preferences.relation,
         situation: preferences.situation,
         budget: preferences.budget,
+        // 예전 형식으로 저장된 값이 남아 있을 수 있어 기본값을 둔다.
+        interests: Array.isArray(preferences.interests) ? preferences.interests : [],
+        mbti: preferences.mbti || null,
         sessionId: getSessionId(),
       }),
     });

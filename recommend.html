@@ -49,23 +49,28 @@
 
   <main>
 
-    <!-- ========================= 추천 폼 인트로 ========================= -->
-    <section class="recommend-page-hero">
-      <div class="container">
-        <p class="section-label">GIFT FINDER</p>
-        <h1 class="section-title">몇 가지만 알려주시면<br />딱 맞는 선물을 찾아드릴게요</h1>
-        <p class="recommend-page-subtitle">연령·관계, 상황, 예산을 태그로 골라주세요. 선택이 끝나면 검색 키워드가 자동으로 완성돼요.</p>
-      </div>
-    </section>
-
-    <!-- ========================= 선택 폼 (Chip 기반) ========================= -->
+    <!-- =========================================================
+         단계별 선택 폼
+         한 화면에 다 늘어놓지 않고 5단계로 나눠 한 번에 하나만 고르게 한다.
+         화면 전환은 recommend.js가 .form-step의 hidden 속성으로 처리한다.
+         ========================================================= -->
     <section class="recommend-form-section">
       <form id="recommendForm" class="container recommend-form" novalidate>
 
-        <!-- 받는 분 : 연령 · 성별 · 관계 -->
-        <div class="form-group" data-group="relation">
-          <h2 class="form-group-title">받는 분 <span class="required-badge">필수</span></h2>
-          <p class="form-group-desc">연령대와 성별은 실제 쇼핑 데이터로 추천 순위를 맞추는 데 쓰여요.</p>
+        <!-- 진행 표시 -->
+        <div class="step-head">
+          <div class="step-head-line">
+            <span class="step-counter"><strong id="stepCurrent">1</strong> / 5</span>
+            <span class="step-hint" id="stepHint">받는 분을 알려주세요</span>
+          </div>
+          <div class="step-progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+            <span class="step-progress-bar" id="stepProgressBar"></span>
+          </div>
+        </div>
+
+        <!-- ---- 1단계 : 연령대 · 성별 ---- -->
+        <div class="form-step" data-step="1">
+          <h1 class="step-title">누구에게 주는 선물인가요?</h1>
 
           <p class="form-subtitle">연령대 <span class="optional-badge">선택</span></p>
           <div class="chip-select-row chip-cols-3" data-field="age">
@@ -85,9 +90,7 @@
           </div>
           <p class="field-error" data-error-for="gender"></p>
 
-          <!-- 사적 관계 4개 + 공적 관계 4개 = 4열 x 2줄로 딱 떨어진다.
-               칩을 늘리거나 줄이면 chip-cols-* 값도 같이 맞춰야 빈칸이 안 생긴다. -->
-          <p class="form-subtitle">관계</p>
+          <p class="form-subtitle">나와의 관계</p>
           <div class="chip-select-row chip-cols-4" data-field="relation">
             <button type="button" class="chip-select" data-value="연인">연인</button>
             <button type="button" class="chip-select" data-value="배우자">배우자</button>
@@ -99,14 +102,14 @@
             <button type="button" class="chip-select" data-value="지인">지인</button>
           </div>
           <p class="field-error" data-error-for="relation"></p>
+
+          <p class="step-note">연령대와 성별은 실제 쇼핑 클릭 데이터로 추천 순위를 맞추는 데 쓰여요.</p>
         </div>
 
-        <!-- 상황 -->
-        <div class="form-group" data-group="situation">
-          <h2 class="form-group-title">상황 <span class="required-badge">필수</span></h2>
-          <p class="form-group-desc">어떤 상황에서 전하는 선물인가요?</p>
+        <!-- ---- 2단계 : 상황 ---- -->
+        <div class="form-step" data-step="2" hidden>
+          <h1 class="step-title">어떤 상황인가요?</h1>
 
-          <!-- 9개 = 3열 x 3줄 -->
           <div class="chip-select-row chip-cols-3" data-field="situation">
             <button type="button" class="chip-select" data-value="생일">생일</button>
             <button type="button" class="chip-select" data-value="기념일">기념일</button>
@@ -121,10 +124,68 @@
           <p class="field-error" data-error-for="situation"></p>
         </div>
 
-        <!-- 예산 -->
-        <div class="form-group" data-group="budget">
-          <h2 class="form-group-title">예산 <span class="required-badge">필수</span></h2>
-          <p class="form-group-desc">희망하는 가격대를 선택해주세요.</p>
+        <!-- ---- 3단계 : MBTI (선택) ----
+             지금은 받아서 저장만 하고 추천 순위에는 쓰지 않는다.
+             MBTI를 상품에 직접 매핑하면 근거가 없으므로, 나중에 LLM 재순위·
+             추천 이유 생성이 붙을 때 함께 반영한다. 그 전까지 문구로 효과를 약속하지 말 것. -->
+        <div class="form-step" data-step="3" hidden>
+          <h1 class="step-title">그 사람의 MBTI는요?</h1>
+
+          <p class="form-subtitle">MBTI <span class="optional-badge">선택</span></p>
+          <div class="chip-select-row chip-cols-4" data-field="mbti">
+            <button type="button" class="chip-select" data-value="ISTJ">ISTJ</button>
+            <button type="button" class="chip-select" data-value="ISFJ">ISFJ</button>
+            <button type="button" class="chip-select" data-value="INFJ">INFJ</button>
+            <button type="button" class="chip-select" data-value="INTJ">INTJ</button>
+            <button type="button" class="chip-select" data-value="ISTP">ISTP</button>
+            <button type="button" class="chip-select" data-value="ISFP">ISFP</button>
+            <button type="button" class="chip-select" data-value="INFP">INFP</button>
+            <button type="button" class="chip-select" data-value="INTP">INTP</button>
+            <button type="button" class="chip-select" data-value="ESTP">ESTP</button>
+            <button type="button" class="chip-select" data-value="ESFP">ESFP</button>
+            <button type="button" class="chip-select" data-value="ENFP">ENFP</button>
+            <button type="button" class="chip-select" data-value="ENTP">ENTP</button>
+            <button type="button" class="chip-select" data-value="ESTJ">ESTJ</button>
+            <button type="button" class="chip-select" data-value="ESFJ">ESFJ</button>
+            <button type="button" class="chip-select" data-value="ENFJ">ENFJ</button>
+            <button type="button" class="chip-select" data-value="ENTJ">ENTJ</button>
+          </div>
+
+          <p class="step-note">모르면 비워두세요. 나머지 조건만으로도 추천은 나옵니다.</p>
+        </div>
+
+        <!-- ---- 4단계 : 취미·성향 (다중 선택, 최대 4개) ---- -->
+        <div class="form-step" data-step="4" hidden>
+          <h1 class="step-title">평소에 뭘 좋아하나요?</h1>
+
+          <p class="form-subtitle">
+            취미·성향 <span class="optional-badge">선택</span>
+            <span class="step-count" id="interestCount">0 / 4</span>
+          </p>
+          <div class="chip-select-row chip-cols-3" data-field="interests" data-multi="4">
+            <button type="button" class="chip-select" data-value="집순이·집돌이">집순이·집돌이</button>
+            <button type="button" class="chip-select" data-value="아웃도어·여행">아웃도어·여행</button>
+            <button type="button" class="chip-select" data-value="운동·헬스">운동·헬스</button>
+            <button type="button" class="chip-select" data-value="요리·베이킹">요리·베이킹</button>
+            <button type="button" class="chip-select" data-value="커피·디저트">커피·디저트</button>
+            <button type="button" class="chip-select" data-value="독서">독서</button>
+            <button type="button" class="chip-select" data-value="게임">게임</button>
+            <button type="button" class="chip-select" data-value="음악">음악</button>
+            <button type="button" class="chip-select" data-value="사진·영상">사진·영상</button>
+            <button type="button" class="chip-select" data-value="뷰티·패션">뷰티·패션</button>
+            <button type="button" class="chip-select" data-value="반려동물">반려동물</button>
+            <button type="button" class="chip-select" data-value="자기계발·공부">자기계발·공부</button>
+            <button type="button" class="chip-select" data-value="캠핑">캠핑</button>
+            <button type="button" class="chip-select" data-value="IT·가젯">IT·가젯</button>
+            <button type="button" class="chip-select" data-value="인테리어·집꾸미기">인테리어·집꾸미기</button>
+          </div>
+
+          <p class="step-note">고르면 추천 3장 중 두 장을 취향에 맞춰 채워요. 건너뛰어도 추천은 나옵니다.</p>
+        </div>
+
+        <!-- ---- 5단계 : 예산 ---- -->
+        <div class="form-step" data-step="5" hidden>
+          <h1 class="step-title">예산은 얼마인가요?</h1>
 
           <div class="chip-select-row chip-cols-4" data-field="budget">
             <button type="button" class="chip-select" data-value="3만원 미만">3만원 미만</button>
@@ -135,13 +196,15 @@
           <p class="field-error" data-error-for="budget"></p>
         </div>
 
-        <!-- 선택 조건 미리보기 -->
-        <div class="keyword-preview">
-          <span class="keyword-preview-label">선택한 조건</span>
-          <span id="keywordPreview" class="keyword-preview-text">선택을 완료하면 여기에 표시돼요</span>
+        <!-- 이동 버튼 -->
+        <div class="step-nav">
+          <button type="button" class="btn step-back" id="stepBack" hidden>이전</button>
+          <button type="button" class="btn btn-primary step-next" id="stepNext">다음</button>
+          <button type="submit" class="btn btn-primary step-next" id="submitBtn" hidden>결과 보기</button>
         </div>
 
-        <button type="submit" id="submitBtn" class="btn btn-primary submit-btn">결과 보기</button>
+        <!-- 지금까지 고른 것 -->
+        <p id="keywordPreview" class="step-summary">아직 고른 조건이 없어요</p>
       </form>
     </section>
 
