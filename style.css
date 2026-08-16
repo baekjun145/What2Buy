@@ -1005,13 +1005,15 @@ img {
 /* 안내 문구는 고르기 전에 읽혀야 하므로 칩 위에 둔다.
    (칩 아래에 있으면 다 고르고 나서야 눈에 들어온다) */
 .step-note {
-  margin: -14px 0 18px;
+  /* 위쪽은 앞 요소의 여백을 그대로 쓴다. 여기서 음수를 주면
+     .form-subtitle(아래 여백 10px) 뒤에 올 때 간격이 -4px가 되어 글자가 붙어 버린다. */
+  margin: 0 0 16px;
   font-size: 13px;
   color: var(--text-muted);
   word-break: keep-all;
 }
 
-/* 제목 바로 아래에 오는 경우는 제목 여백을 당겨 붙인다. */
+/* 제목 바로 아래에 올 때만 제목의 28px 여백을 10px 정도로 당겨 붙인다. */
 .step-title + .step-note {
   margin-top: -18px;
 }
