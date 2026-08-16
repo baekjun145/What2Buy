@@ -165,6 +165,13 @@ img {
   grid-template-columns: repeat(8, minmax(0, 1fr));
 }
 
+/* 그리드에서는 칩이 열 너비만큼 늘어난다. .chip 은 justify-content 가 없어
+   글자가 왼쪽에 붙으므로, 늘어난 칩 안에서 가운데로 맞춘다. */
+.chip-grid-8 .chip {
+  justify-content: center;
+  text-align: center;
+}
+
 /* flex 줄바꿈을 원하는 자리에서 강제로 끊는다.
    폭이 제각각인 칩은 그냥 두면 앞줄에 몰려 10 + 5 처럼 치우친다. */
 .chip-row-break {
