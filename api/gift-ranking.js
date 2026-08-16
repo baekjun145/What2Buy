@@ -22,18 +22,17 @@ const { CATEGORY_NAMES, KEYWORDS, INTEREST_KEYWORDS } = require("../lib/gift-key
 const supabase = require("../lib/supabase");
 const curator = require("../lib/curator");
 
-// 관심사를 고르면 3장 중 앞 두 자리를 취향에 맞는 후보로 먼저 채운다.
+// 취향에 맞는 후보가 이 개수 이상이면, 후보를 그것만으로 좁힌다.
 //
-// [왜 점수 배수가 아니라 자리 배정인가]
+// [왜 점수 배수가 아니라 후보 좁히기인가]
 // 인기 데이터와 개인 취향은 자주 충돌한다. 실측하면 20대 여성 후보에서
 // '게이밍마우스'는 26위(6.05점)이고 3위는 68.79점이라, 점수로 끌어올리려면
 // 11배를 곱해야 한다. 그 정도 배수는 이미 필터나 마찬가지이고,
 // 화면에 보여 주는 인기 지수와 실제 정렬 근거가 어긋나게 된다.
 //
-// 그래서 점수는 순수 인기순 그대로 두고(= 카드에 적힌 지수와 일치),
-// 3장 중 몇 자리를 취향 몫으로 떼어 주는 방식을 쓴다.
-// 나머지 한 자리는 취향과 무관하게 인기순으로 남겨, 시야가 좁아지지 않게 한다.
-const INTEREST_SLOTS = 2;
+// 그래서 점수(= 카드에 적힌 지수)는 순수 인기순 그대로 두고,
+// 후보 목록 단계에서 취향에 맞는 것만 남기는 방식을 쓴다.
+const INTEREST_SLOTS = 3;
 
 function buildInterestBoost(interests) {
   const boosted = new Set();
@@ -532,45 +531,17 @@ module.exports = async function handler(req, res) {
 
     scored.sort((a, b) => b.score - a.score);
 
-    // 표시명이 같은 것은 한 장만 남긴다. 브랜드 키워드를 일반명으로 보여주기 때문에,
-    // 그냥 상위 3개를 자르면 '립스틱' 카드가 세 장 나올 수 있다.
-    // 점수순으로 이미 정렬돼 있으므로 먼저 만나는 쪽(= 가장 높은 점수)이 남는다.
-    const seenLabels = new Set();
-    const top = [];
-    const take = (item) => {
-      if (seenLabels.has(item.label)) return;
-      seenLabels.add(item.label);
-      top.push(item);
-    };
-
-    // 취향 몫을 먼저 채우고(관심사를 고른 경우에만), 남은 자리를 인기순으로 메운다.
-    if (boosted.size > 0) {
-      for (const item of scored) {
-        if (top.length >= INTEREST_SLOTS) break;
-        if (item.matchesInterest) take(item);
-      }
-    }
-    for (const item of scored) {
-      if (top.length >= 3) break;
-      take(item);
-    }
-
-    // 취향 카드가 앞에 오면 점수 순서가 뒤집혀 보이므로 다시 점수순으로 정렬한다.
-    // (어떤 카드가 취향 때문에 뽑혔는지는 matchesInterest로 표시한다)
-    top.sort((a, b) => b.score - a.score);
-
-    // ---- 3단계 : 큐레이터(LLM)가 후보 안에서 3개를 고르고 이유를 붙인다 ----
-    // MBTI·관계처럼 클릭 데이터에 없는 조건은 여기서만 반영된다.
+    // ---- 3단계 : 후보를 좁히고, 큐레이터(LLM)가 그 안에서 3개를 고른다 ----
     //
     // [취향을 고른 경우]
-    // 취향에 맞는 후보가 3개 이상이면 그것만 넘긴다. 예전에는 취향과 무관하게
-    // 상위 8개를 넘겼는데, 그러면 위에서 만든 취향 자리 배정이 LLM 단계에서
-    // 통째로 무시됐다. (뷰티·인테리어를 골랐는데 잠옷이 올라오던 문제)
-    // 3개가 안 되면 자리를 못 채우므로 전체 후보를 그대로 쓴다.
+    // 취향에 맞는 후보가 3개 이상이면 그것만 남긴다.
+    // 3개가 안 되면 카드를 못 채우므로 전체 후보를 그대로 쓴다.
     const matched = scored.filter((item) => item.matchesInterest);
-    const pool = boosted.size > 0 && matched.length >= 3 ? matched : scored;
+    const pool = boosted.size > 0 && matched.length >= INTEREST_SLOTS ? matched : scored;
 
-    // 표시명이 겹치지 않는 후보만 넘겨 '립스틱' 카드가 여러 장 되는 것을 막는다.
+    // 표시명이 같은 것은 한 장만 남긴다. 브랜드 키워드를 일반명으로 보여주기 때문에,
+    // 그냥 위에서부터 자르면 '립스틱' 카드가 세 장 나올 수 있다.
+    // 점수순으로 정렬돼 있으므로 먼저 만나는 쪽(= 가장 높은 점수)이 남는다.
     const shortlist = [];
     const shortlistLabels = new Set();
     for (const item of pool) {
@@ -580,6 +551,7 @@ module.exports = async function handler(req, res) {
       if (shortlist.length >= 8) break;
     }
 
+    // MBTI·관계처럼 클릭 데이터에 없는 조건은 여기서만 반영된다.
     const curated = await curator.curate(shortlist, {
       age,
       gender,
@@ -590,8 +562,11 @@ module.exports = async function handler(req, res) {
       interests,
     });
 
-    // LLM이 실패하면 위에서 만든 데이터 기반 3장을 그대로 쓴다.
-    const finalItems = curated.source === "llm" ? curated.items.slice(0, 3) : top;
+    // LLM이 실패하면 같은 후보 목록의 상위 3개를 쓴다.
+    // 예전에는 폴백만 다른 목록(취향 자리 배정 결과)을 써서, LLM 성공 여부에 따라
+    // 취향 반영 정도가 달라졌다. 두 경로가 같은 후보에서 나오도록 맞춘다.
+    const finalItems =
+      curated.source === "llm" ? curated.items.slice(0, 3) : shortlist.slice(0, 3);
 
     // 큐레이션 링크를 먼저 본다. 사진까지 지정돼 있으면 이미지 검색을 건너뛴다.
     // (사진을 자동으로 가져오면 링크한 상품과 다른 물건이 찍혀 나올 수 있다)
