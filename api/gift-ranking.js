@@ -642,8 +642,10 @@ module.exports = async function handler(req, res) {
         relaxed, // 조건을 완화했다면 어떤 축을 풀었는지
         segment: { age: age || null, gender: gender || null },
         dictionarySource: dictionary.source, // 'db' | 'code'
-        curatedBy: curated.source, // 'llm' | 'score' (LLM 실패 시 데이터 순서로 되돌아감)
-        curatorDetail: curated.detail || null, // 되돌아간 이유 (진단용)
+        // 'llm' | 'score'. score면 detail에 되돌아간 이유가 담긴다
+        // (no_key / http_4xx / err_AbortError / no_picks / name_mismatch)
+        curatedBy: curated.source,
+        curatorDetail: curated.detail || null,
         period,
       },
     });
