@@ -159,6 +159,20 @@ img {
   gap: 8px;
 }
 
+/* 폭이 같은 칩 묶음(MBTI 16개)을 8열 x 2줄로 반듯하게 세운다. */
+.chip-grid-8 {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+/* flex 줄바꿈을 원하는 자리에서 강제로 끊는다.
+   폭이 제각각인 칩은 그냥 두면 앞줄에 몰려 10 + 5 처럼 치우친다. */
+.chip-row-break {
+  flex-basis: 100%;
+  height: 0;
+  margin: 0;
+}
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -1612,6 +1626,16 @@ img {
 
   .recommend-form-section {
     padding-top: 88px;
+  }
+
+  /* 좁은 화면에서 8열은 글자가 뭉개진다. 4열 x 4줄로 접는다. */
+  .chip-grid-8 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* 이미 폭 때문에 여러 줄로 접히므로 강제 줄바꿈은 오히려 방해가 된다. */
+  .chip-row-break {
+    display: none;
   }
 
   .step-title {

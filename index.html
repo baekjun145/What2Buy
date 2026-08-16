@@ -69,7 +69,7 @@
     <section id="service" class="section fade-in-section">
       <div class="container">
         <p class="section-label">SERVICE INTRO</p>
-        <h2 class="section-title">선물은 인기순이 아니라<br />그 사람 순이어야죠</h2>
+        <h2 class="section-title">선물은 인기순이 아니라 그 사람 순이어야죠</h2>
 
         <!-- 여기 문구는 실제 동작과 어긋나면 안 된다.
              지금 추천에 반영되는 값은 연령대·성별·상황·예산 넷이다.
@@ -81,8 +81,10 @@
           </p>
           <p>
             What2Buy는 <strong>연령대·성별, 상황과 예산</strong>은 물론
-            <strong>MBTI와 취미까지</strong> 물어봅니다. 그 조건에 맞는 후보를
-            <strong>최근 3개월 네이버 쇼핑 클릭 데이터</strong>로 추린 뒤,
+            <strong>MBTI와 취미까지</strong> 물어봅니다.
+          </p>
+          <p>
+            그 조건에 맞는 후보를 <strong>최근 3개월 네이버 쇼핑 클릭 데이터</strong>로 추린 뒤,
             그 사람에게 어울리는 순서로 딱 3가지만 골라드립니다.
           </p>
           <p>
@@ -105,40 +107,43 @@
         <p class="section-label">PROCESS</p>
         <h2 class="section-title">맞춤 추천, 4단계면 충분해요</h2>
 
+        <!-- 이 4단계는 실제 동작과 맞아야 한다.
+             STEP 01은 recommend.html의 5단계, STEP 02~03은 api/gift-ranking의
+             두 단계(쇼핑인사이트 → lib/curator)에 대응한다. -->
         <ol class="timeline">
           <li class="timeline-item">
             <span class="step-badge">STEP 01</span>
-            <h3 class="timeline-title">받는 사람과 상황을 알려주세요</h3>
+            <h3 class="timeline-title">태그를 5단계로 골라주세요</h3>
             <ul class="timeline-desc">
-              <li>관계·연령·성별을 선택하면 추천 조건이 자동으로 잡혀요</li>
-              <li>생일, 기념일, 명절 등 상황에 맞는 감성 필터가 적용돼요</li>
+              <li>받는 분(연령대·성별·관계) → 상황 → MBTI → 취미·성향 → 예산</li>
+              <li>MBTI와 취미는 건너뛰어도 되고, 1분이면 끝나요</li>
             </ul>
           </li>
 
           <li class="timeline-item">
             <span class="step-badge">STEP 02</span>
-            <h3 class="timeline-title">예산을 정해주세요</h3>
+            <h3 class="timeline-title">쇼핑 데이터로 후보를 추려요</h3>
             <ul class="timeline-desc">
-              <li>최소·최대 금액을 슬라이더로 간단하게 설정해요</li>
-              <li>예산을 벗어나는 상품은 결과에서 자동으로 제외돼요</li>
+              <li>상황과 예산에 맞지 않는 선물은 후보에서 먼저 빠져요</li>
+              <li>남은 후보를 최근 3개월 네이버 쇼핑 클릭 데이터로 줄 세워요</li>
             </ul>
           </li>
 
           <li class="timeline-item">
             <span class="step-badge">STEP 03</span>
-            <h3 class="timeline-title">AI가 맞춤 키워드를 조합해요</h3>
+            <h3 class="timeline-title">AI 큐레이터가 3가지를 골라요</h3>
             <ul class="timeline-desc">
-              <li>입력한 정보를 해석해 최적의 검색 키워드를 생성해요</li>
-              <li>네이버 쇼핑 인사이트로 인기 선물을 골라내요</li>
+              <li>추려진 후보 안에서만 고릅니다. 없는 상품을 지어내지 않아요</li>
+              <li>MBTI·취미처럼 클릭 데이터로 알 수 없는 조건이 여기서 반영돼요</li>
             </ul>
           </li>
 
           <li class="timeline-item">
             <span class="step-badge">STEP 04</span>
-            <h3 class="timeline-title">3장의 카드로 확인해요</h3>
+            <h3 class="timeline-title">이유까지 확인하고 바로 구매해요</h3>
             <ul class="timeline-desc">
-              <li>추천 선물과 추천 이유를 카드 한 장에 요약해요</li>
-              <li>카드를 눌러 네이버 쇼핑 검색으로 바로 이동할 수 있어요</li>
+              <li>카드를 뒤집으면 고른 이유와 인기 지수가 함께 나와요</li>
+              <li>상품 보기를 누르면 네이버 쇼핑으로 바로 이동해요</li>
             </ul>
           </li>
         </ol>
@@ -278,7 +283,8 @@
              lib/gift-keywords.js의 BUDGET_TIERS가 원본이다. -->
         <div class="category-group">
           <h3 class="category-title">MBTI <span class="category-optional">선택</span></h3>
-          <div class="chip-row">
+          <!-- 16개가 전부 같은 폭이라 8열 그리드로 8+8 정렬이 깔끔하게 떨어진다 -->
+          <div class="chip-row chip-grid-8">
             <span class="chip chip-lg">ISTJ</span>
             <span class="chip chip-lg">ISFJ</span>
             <span class="chip chip-lg">INFJ</span>
@@ -309,6 +315,9 @@
             <span class="chip chip-lg">독서</span>
             <span class="chip chip-lg">게임</span>
             <span class="chip chip-lg">음악</span>
+            <!-- 칩 폭이 66~143px으로 제각각이라 균등 그리드를 쓸 수 없다.
+                 여기서 줄을 끊어 8 + 7 로 나눈다. 그냥 두면 10 + 5 로 치우친다. -->
+            <span class="chip-row-break" aria-hidden="true"></span>
             <span class="chip chip-lg">사진·영상</span>
             <span class="chip chip-lg">뷰티·패션</span>
             <span class="chip chip-lg">반려동물</span>
