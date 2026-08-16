@@ -415,6 +415,46 @@ img {
   font-weight: 700;
 }
 
+/* 핵심 세 가지를 문단에서 끄집어내 훑어보기 쉽게 둔다. */
+.intro-points {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--border-color);
+  display: grid;
+  gap: 12px;
+}
+
+.intro-points li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 16px;
+  color: var(--text-secondary);
+  word-break: keep-all;
+}
+
+.intro-points li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent-color);
+  font-weight: 800;
+}
+
+.intro-cta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.intro-cta-note {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
 /* =========================================================
    Process : 세로 타임라인
    ========================================================= */
