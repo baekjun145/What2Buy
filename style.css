@@ -54,6 +54,14 @@
   box-sizing: border-box;
 }
 
+/* 브라우저 기본값은 [hidden] { display: none } 이지만, 작성자 스타일이
+   UA 스타일보다 우선한다. .btn { display: inline-flex } 같은 규칙이 걸려 있으면
+   hidden 속성을 줘도 계속 보인다. (실제로 마지막 단계가 아닌데도
+   '결과 보기' 버튼이 함께 나왔다) 그래서 여기서 확실히 눌러 둔다. */
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -980,11 +988,18 @@ img {
   color: var(--accent-color);
 }
 
+/* 안내 문구는 고르기 전에 읽혀야 하므로 칩 위에 둔다.
+   (칩 아래에 있으면 다 고르고 나서야 눈에 들어온다) */
 .step-note {
-  margin-top: 18px;
+  margin: -14px 0 18px;
   font-size: 13px;
   color: var(--text-muted);
   word-break: keep-all;
+}
+
+/* 제목 바로 아래에 오는 경우는 제목 여백을 당겨 붙인다. */
+.step-title + .step-note {
+  margin-top: -18px;
 }
 
 .step-nav {
