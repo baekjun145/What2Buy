@@ -643,6 +643,7 @@ module.exports = async function handler(req, res) {
         segment: { age: age || null, gender: gender || null },
         dictionarySource: dictionary.source, // 'db' | 'code'
         curatedBy: curated.source, // 'llm' | 'score' (LLM 실패 시 데이터 순서로 되돌아감)
+        curatorDetail: curated.detail || null, // 되돌아간 이유 (진단용)
         period,
       },
     });
