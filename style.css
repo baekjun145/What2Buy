@@ -32,7 +32,7 @@
 
   /* ---- 레이아웃 ---- */
   --max-width: 1080px;
-  --section-padding: 128px;
+  --section-padding: 88px;
   --radius-card: 12px;
 
   /* ---- 히어로 전용 팔레트 (테크니컬 딥 블루, 항상 고정) ---- */
@@ -106,14 +106,17 @@ img {
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.14em;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
+/* line-height를 지정하지 않으면 body의 본문값(1.65)을 받아
+   34px 제목 위아래로 11px씩 여백이 더 붙는다. 제목은 1.25로 조인다. */
 .section-title {
   font-size: 34px;
   font-weight: 700;
+  line-height: 1.25;
   letter-spacing: -0.02em;
-  margin-bottom: 48px;
+  margin-bottom: 36px;
   color: var(--text-primary);
 }
 
@@ -550,9 +553,9 @@ img {
 /* =========================================================
    Categories
    ========================================================= */
-/* .section-title의 margin-bottom(48px)이 이미 크므로 위쪽 여백은 당겨 붙인다. */
+/* 제목 바로 아래 붙는 안내문이라 .section-title의 margin-bottom(36px)을 당겨 16px로 만든다. */
 .category-hint {
-  margin: -28px 0 32px;
+  margin: -20px 0 28px;
   font-size: 14px;
   color: var(--text-secondary);
   word-break: keep-all;
@@ -1061,15 +1064,9 @@ img {
   padding-top: 112px;
 }
 
-/* RESULT → 제목 → 조건 요약은 한 덩어리로 읽히는 머리말이라 서로 붙여 둔다.
-   공통 .section-title의 48px은 랜딩 페이지 섹션 간격 기준이라 여기서만 덮어쓴다.
-   line-height도 body의 1.65를 그대로 받으면 34px 제목 위아래로 여백이 더 붙는다. */
-.result-page-section .section-label {
-  margin-bottom: 8px;
-}
-
+/* RESULT → 제목 → 조건 요약은 한 덩어리로 읽히는 머리말이라 더 바짝 붙인다.
+   (공통 .section-title의 36px은 제목과 섹션 본문 사이 간격 기준이다) */
 .result-page-section .section-title {
-  line-height: 1.25;
   margin-bottom: 12px;
 }
 
@@ -1357,7 +1354,7 @@ img {
    ========================================================= */
 @media (max-width: 768px) {
   :root {
-    --section-padding: 80px;
+    --section-padding: 60px;
   }
 
   .navbar-inner {
