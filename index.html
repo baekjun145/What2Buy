@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -203,11 +203,10 @@
         <h2 class="section-title">이런 기준으로 추천해요</h2>
 
         <!-- 아래 그룹 구성과 칩 문구는 recommend.html의 실제 선택지와 같아야 한다.
-             is-example은 '고른 상태'가 어떻게 보이는지 알려주는 예시일 뿐,
-             여기서는 누를 수 없다. 맨 아래 조합 결과와 짝이 맞도록 유지할 것. -->
+             여기 칩은 무엇을 고를 수 있는지 보여주는 목록일 뿐 누를 수 없다.
+             (미리 골라 둔 상태로 표시하면 눌리는 것으로 오해돼 넣지 않는다) -->
         <p class="category-hint">
           추천 폼에서 아래 태그를 하나씩 고르면 검색 키워드가 자동으로 완성돼요.
-          <strong>코랄색</strong>이 고른 상태예요.
         </p>
 
         <div class="category-group">
@@ -215,7 +214,7 @@
           <div class="chip-row">
             <span class="chip chip-lg">영유아/아동</span>
             <span class="chip chip-lg">10대</span>
-            <span class="chip chip-lg is-example">20대</span>
+            <span class="chip chip-lg">20대</span>
             <span class="chip chip-lg">30대</span>
             <span class="chip chip-lg">40대</span>
             <span class="chip chip-lg">50대 이상</span>
@@ -225,7 +224,7 @@
         <div class="category-group">
           <h3 class="category-title">성별</h3>
           <div class="chip-row">
-            <span class="chip chip-lg is-example">여성</span>
+            <span class="chip chip-lg">여성</span>
             <span class="chip chip-lg">남성</span>
             <span class="chip chip-lg">성별 무관</span>
           </div>
@@ -234,7 +233,7 @@
         <div class="category-group">
           <h3 class="category-title">관계</h3>
           <div class="chip-row">
-            <span class="chip chip-lg is-example">연인</span>
+            <span class="chip chip-lg">연인</span>
             <span class="chip chip-lg">배우자</span>
             <span class="chip chip-lg">부모님</span>
             <span class="chip chip-lg">형제·자매</span>
@@ -248,7 +247,7 @@
         <div class="category-group">
           <h3 class="category-title">상황</h3>
           <div class="chip-row">
-            <span class="chip chip-lg is-example">생일</span>
+            <span class="chip chip-lg">생일</span>
             <span class="chip chip-lg">기념일</span>
             <span class="chip chip-lg">명절</span>
             <span class="chip chip-lg">졸업·입학</span>
@@ -266,13 +265,13 @@
           <h3 class="category-title">예산</h3>
           <div class="chip-row">
             <span class="chip chip-lg">3만원 미만</span>
-            <span class="chip chip-lg is-example">3~5만원대</span>
+            <span class="chip chip-lg">3~5만원대</span>
             <span class="chip chip-lg">5~10만원대</span>
             <span class="chip chip-lg">10만원 이상</span>
           </div>
         </div>
 
-        <!-- 첫 줄은 위에서 is-example로 표시한 조합의 결과다. 한쪽만 바꾸지 말 것. -->
+        <!-- 여기 값은 전부 위 그룹의 실제 선택지 중 하나여야 한다. -->
         <div class="category-group">
           <h3 class="category-title">이렇게 검색 키워드가 완성돼요</h3>
           <div class="chip-row">

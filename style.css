@@ -177,27 +177,6 @@ img {
   color: var(--text-primary);
 }
 
-/* 고른 상태가 어떻게 보이는지 알려주는 예시. 실제로 누를 수 있는 건 아니다.
-   폼의 .chip-select.is-active와 같은 색·체크 표시를 쓴다. */
-.chip-lg.is-example {
-  position: relative;
-  padding-right: 36px;
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-  color: #ffffff;
-  box-shadow: 0 6px 16px rgba(var(--accent-color-rgb), 0.26);
-}
-
-.chip-lg.is-example::after {
-  content: "✓";
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  font-weight: 700;
-}
-
 /* 조합 결과는 고르는 대상이 아니므로 알약형 태그로 두어 선택지와 구분한다. */
 .chip-lg.chip-result {
   border-radius: 999px;
