@@ -18,8 +18,26 @@
 //
 // 두 호출 모두 ages/gender 필터를 받으므로 개인화는 API가 직접 해준다.
 
-const { CATEGORY_NAMES, KEYWORDS } = require("../lib/gift-keywords");
+const { CATEGORY_NAMES, KEYWORDS, INTEREST_KEYWORDS } = require("../lib/gift-keywords");
 const supabase = require("../lib/supabase");
+
+// 고른 관심사에 해당하는 키워드의 점수를 올린다.
+//
+// 후보를 걸러내지 않고 가중치만 주는 이유: 관심사로 필터링하면 조합에 따라
+// 후보가 6개 아래로 떨어져 예산 조건이 통째로 풀린다(selectCandidates 참고).
+// 취향은 "이게 아니면 안 된다"가 아니라 "이쪽을 더 좋아한다"에 가깝기도 하다.
+//
+// 여러 관심사에 겹쳐 걸려도 배수는 한 번만 적용한다. 특정 키워드가
+// 관심사 개수만큼 점수가 뻥튀기되는 것을 막기 위함이다.
+const INTEREST_BOOST = 1.6;
+
+function buildInterestBoost(interests) {
+  const boosted = new Set();
+  for (const name of interests || []) {
+    for (const keyword of INTEREST_KEYWORDS[name] || []) boosted.add(keyword);
+  }
+  return boosted;
+}
 
 // 카드에 표시할 이름. 브랜드 키워드를 일반명으로 바꿔 보여주기 위한 것이다.
 // (순위·검색 링크·사진·통계는 전부 실제 keyword로 돌아간다)
@@ -443,6 +461,8 @@ module.exports = async function handler(req, res) {
   }
 
   const { age, gender, relation, situation, budget, sessionId } = req.body || {};
+  // 관심사는 최대 4개. 그 이상 오면 앞에서 자른다.
+  const interests = Array.isArray(req.body?.interests) ? req.body.interests.slice(0, 4) : [];
   const startedAt = Date.now();
 
   const period = buildPeriod();
@@ -483,13 +503,17 @@ module.exports = async function handler(req, res) {
       )
     );
 
+    const boosted = buildInterestBoost(interests);
+
     const scored = [];
     for (const { categoryId, ratios } of chunkResults) {
       for (const [keyword, ratio] of ratios) {
         const weight = categoryWeight.get(categoryId) ?? 0;
+        const matchesInterest = boosted.has(keyword);
         scored.push({
           keyword,
           label: displayName(keyword),
+          matchesInterest, // 카드에 '관심사와 맞음' 표시를 붙이기 위해 내려보낸다
           category: categoryId,
           categoryName: CATEGORY_NAMES[categoryId] || categoryId,
           // 화면에는 '100 만점 지수'로 보여주므로 100을 넘지 않게 자른다.
@@ -497,7 +521,7 @@ module.exports = async function handler(req, res) {
           // (순위는 아래 score로 매기고 그쪽은 자르지 않는다)
           keywordRatio: Number(Math.min(ratio, 100).toFixed(1)),
           categoryWeight: Number(weight.toFixed(2)),
-          score: Number((weight * ratio).toFixed(2)),
+          score: Number((weight * ratio * (matchesInterest ? INTEREST_BOOST : 1)).toFixed(2)),
         });
       }
     }
