@@ -21,15 +21,18 @@
 const { CATEGORY_NAMES, KEYWORDS, INTEREST_KEYWORDS } = require("../lib/gift-keywords");
 const supabase = require("../lib/supabase");
 
-// 고른 관심사에 해당하는 키워드의 점수를 올린다.
+// 관심사를 고르면 3장 중 앞 두 자리를 취향에 맞는 후보로 먼저 채운다.
 //
-// 후보를 걸러내지 않고 가중치만 주는 이유: 관심사로 필터링하면 조합에 따라
-// 후보가 6개 아래로 떨어져 예산 조건이 통째로 풀린다(selectCandidates 참고).
-// 취향은 "이게 아니면 안 된다"가 아니라 "이쪽을 더 좋아한다"에 가깝기도 하다.
+// [왜 점수 배수가 아니라 자리 배정인가]
+// 인기 데이터와 개인 취향은 자주 충돌한다. 실측하면 20대 여성 후보에서
+// '게이밍마우스'는 26위(6.05점)이고 3위는 68.79점이라, 점수로 끌어올리려면
+// 11배를 곱해야 한다. 그 정도 배수는 이미 필터나 마찬가지이고,
+// 화면에 보여 주는 인기 지수와 실제 정렬 근거가 어긋나게 된다.
 //
-// 여러 관심사에 겹쳐 걸려도 배수는 한 번만 적용한다. 특정 키워드가
-// 관심사 개수만큼 점수가 뻥튀기되는 것을 막기 위함이다.
-const INTEREST_BOOST = 1.6;
+// 그래서 점수는 순수 인기순 그대로 두고(= 카드에 적힌 지수와 일치),
+// 3장 중 몇 자리를 취향 몫으로 떼어 주는 방식을 쓴다.
+// 나머지 한 자리는 취향과 무관하게 인기순으로 남겨, 시야가 좁아지지 않게 한다.
+const INTEREST_SLOTS = 2;
 
 function buildInterestBoost(interests) {
   const boosted = new Set();
@@ -521,7 +524,7 @@ module.exports = async function handler(req, res) {
           // (순위는 아래 score로 매기고 그쪽은 자르지 않는다)
           keywordRatio: Number(Math.min(ratio, 100).toFixed(1)),
           categoryWeight: Number(weight.toFixed(2)),
-          score: Number((weight * ratio * (matchesInterest ? INTEREST_BOOST : 1)).toFixed(2)),
+          score: Number((weight * ratio).toFixed(2)),
         });
       }
     }
@@ -533,12 +536,27 @@ module.exports = async function handler(req, res) {
     // 점수순으로 이미 정렬돼 있으므로 먼저 만나는 쪽(= 가장 높은 점수)이 남는다.
     const seenLabels = new Set();
     const top = [];
-    for (const item of scored) {
-      if (seenLabels.has(item.label)) continue;
+    const take = (item) => {
+      if (seenLabels.has(item.label)) return;
       seenLabels.add(item.label);
       top.push(item);
-      if (top.length === 3) break;
+    };
+
+    // 취향 몫을 먼저 채우고(관심사를 고른 경우에만), 남은 자리를 인기순으로 메운다.
+    if (boosted.size > 0) {
+      for (const item of scored) {
+        if (top.length >= INTEREST_SLOTS) break;
+        if (item.matchesInterest) take(item);
+      }
     }
+    for (const item of scored) {
+      if (top.length >= 3) break;
+      take(item);
+    }
+
+    // 취향 카드가 앞에 오면 점수 순서가 뒤집혀 보이므로 다시 점수순으로 정렬한다.
+    // (어떤 카드가 취향 때문에 뽑혔는지는 matchesInterest로 표시한다)
+    top.sort((a, b) => b.score - a.score);
 
     // 큐레이션 링크를 먼저 본다. 사진까지 지정돼 있으면 이미지 검색을 건너뛴다.
     // (사진을 자동으로 가져오면 링크한 상품과 다른 물건이 찍혀 나올 수 있다)
